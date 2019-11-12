@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SimpleRecyclerView</string>
+    <string name="action_settings">Settings</string>
+    <string name="introduceNameOfTheTrip">Name of the trip</string>
+    <string name="introduceNameOfDestiny">Name of destiny</string>
+    <string name="introduceStartingDate">Starting date</string>
+    <string name="introduceEndingDate">Ending date</string>
+    <string name="addItem">ADD</string>
+    <string name="cancel">CANCEL</string>
+</resources>
