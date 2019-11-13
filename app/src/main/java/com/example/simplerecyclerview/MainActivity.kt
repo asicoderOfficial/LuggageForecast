@@ -1,41 +1,34 @@
 package com.example.simplerecyclerview
 
+import android.annotation.SuppressLint
 import android.content.DialogInterface
-import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
-import android.view.*
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.Room
 import com.example.simplerecyclerview.data.Dao
 import com.example.simplerecyclerview.data.DataClass
 import com.example.simplerecyclerview.data.DatabaseClass
 import com.facebook.stetho.Stetho
-import io.reactivex.Single
-
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.popup_data.*
 import kotlinx.android.synthetic.main.popup_data.view.*
 
 class MainActivity : AppCompatActivity() {
 
     private var db: DatabaseClass? = null
     private var data: Dao? = null
-
+    var tripsDB: DatabaseClass? = null
     private lateinit var simpleViewModel: SimpleViewModel
-    private var tripsList: ArrayList<Trip> = ArrayList()
+    private var tripsList: ArrayList<DataClass> = ArrayList()
     private lateinit var rvAdapter: SimpleAdapter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        initDB()
+
+        tripsDB =
+            Room.databaseBuilder(applicationContext, DatabaseClass::class.java, "Trips DB").build()
         Stetho.initializeWithDefaults(this)
         simpleViewModel = ViewModelProviders.of(this).get(SimpleViewModel::class.java)
 
@@ -43,13 +36,14 @@ class MainActivity : AppCompatActivity() {
         rvAdapter = SimpleAdapter(tripsList, this)
         simpleRV.adapter = rvAdapter
         addBT.setOnClickListener {
-            createPopUp()
+            createPopUp(tripsDB)
 
         }
 
     }
 
-    fun createPopUp() {
+    @SuppressLint("InflateParams")
+    fun createPopUp(tripsDB: DatabaseClass?) {
         val popUpBuilder = AlertDialog.Builder(this)
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
         popUpBuilder.setView(popUpInflater)
@@ -60,37 +54,20 @@ class MainActivity : AppCompatActivity() {
                 .create()
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            val newTrip = Trip(
-                popUpInflater.nameOfTripEditText.text.toString(),
-                popUpInflater.destinyAutoCTV.text.toString(),
-                popUpInflater.startDateEditText.text.toString(),
-                popUpInflater.endDateEditText.text.toString()
-            )
-            tripsList.add(newTrip)
+            Thread {
+                val newTrip = DataClass(
+                    popUpInflater.nameOfTripEditText.text.toString(),
+                    popUpInflater.destinyAutoCTV.text.toString(),
+                    popUpInflater.startDateEditText.text.toString(),
+                    popUpInflater.endDateEditText.text.toString()
+                )
+                tripsList.add(newTrip)
+                if (tripsDB != null) {
+                    tripsDB.newDao().insert(newTrip)
+                }
+            }.start()
             rvAdapter.notifyItemInserted(tripsList.size - 1)
             dialog.dismiss()
         }
-
-
-        /*newItemCreator.show()
-        newItemCreator.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            val newTrip = DataClass(popUpInflater.nameOfTripEditText.text.toString(),
-                                    popUpInflater.destinyAutoCTV.text.toString(),
-                                    popUpInflater.startDateEditText.text.toString(),
-                                    popUpInflater.endDateEditText.text.toString())
-            simpleViewModel.insertNewTrip(newTrip)
-            //this?.insert(newTrip)
-            newItemCreator.dismiss()
-        }
-        newItemCreator.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
-            newItemCreator.dismiss()
-        }*/
-
-    }
-
-
-    fun initDB() {
-        db = DatabaseClass.getAppDataBase(this)
-        data = db?.newDao()
     }
 }

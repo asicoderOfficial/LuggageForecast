@@ -9,13 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.simplerecyclerview.data.DataClass
 import kotlinx.android.synthetic.main.new_item.view.*
 
-class SimpleAdapter(val tripsList: ArrayList<Trip>, val context: Context) :
+class SimpleAdapter(val tripsList: ArrayList<DataClass>, val context: Context) :
     RecyclerView.Adapter<ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Log.i("onBindViewHolder", "onBindViewHolder called. Position: $position")
         holder.name.text = tripsList.get(position).name
-        holder.destiny.text = tripsList.get(position).destiny
+        holder.destiny.text = tripsList.get(position).destination
         holder.start.text = tripsList.get(position).start
         holder.end.text = tripsList.get(position).end
     }
