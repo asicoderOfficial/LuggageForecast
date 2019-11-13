@@ -6,5 +6,9 @@
     <string name="introduceStartingDate">Starting date</string>
     <string name="introduceEndingDate">Ending date</string>
     <string name="addItem">ADD</string>
-    <string name="cancel">CANCEL</string>
+    <string name="cancel">Cancel</string>
+    <string name="end">END</string>
+    <string name="start">START</string>
+    <string name="destiny">DESTINY</string>
+    <string name="name">NAME</string>
 </resources>
