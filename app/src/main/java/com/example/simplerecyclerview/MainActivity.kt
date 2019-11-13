@@ -3,6 +3,7 @@ package com.example.simplerecyclerview
 import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProviders
@@ -14,6 +15,7 @@ import com.example.simplerecyclerview.data.DatabaseClass
 import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.popup_data.view.*
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,10 +25,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var simpleViewModel: SimpleViewModel
     private var tripsList: ArrayList<DataClass> = ArrayList()
     private lateinit var rvAdapter: SimpleAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        Timber.plant()
         tripsDB =
             Room.databaseBuilder(applicationContext, DatabaseClass::class.java, "Trips DB").build()
         Stetho.initializeWithDefaults(this)
@@ -41,6 +44,37 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onStart() {
+        super.onStart()
+        Timber.i("onStart called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.i("onResume called")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.i("onPause called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Timber.i("onStop called")
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        Timber.i("onRestart called")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.i("onDestroy called")
+    }
+
 
     @SuppressLint("InflateParams")
     fun createPopUp(tripsDB: DatabaseClass?) {
@@ -69,5 +103,18 @@ class MainActivity : AppCompatActivity() {
             rvAdapter.notifyItemInserted(tripsList.size - 1)
             dialog.dismiss()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Timber.i("onSaveInstanceState called")
+    }
+
+    override fun onRestoreInstanceState(
+        savedInstanceState: Bundle?,
+        persistentState: PersistableBundle?
+    ) {
+        super.onRestoreInstanceState(savedInstanceState, persistentState)
+        Timber.i("onRestoreInstanceState called")
     }
 }
