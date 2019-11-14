@@ -13,4 +13,5 @@
     <string name="name">NAME</string>
     <string name="eraseTripCV">Erase trip</string>
     <string name="editTripCV">Edit trip</string>
+    <string name="threedotsmenu">ThreeDotsMenu</string>
 </resources>

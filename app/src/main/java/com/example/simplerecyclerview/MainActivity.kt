@@ -9,7 +9,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
-import com.example.simplerecyclerview.data.Dao
 import com.example.simplerecyclerview.data.DataClass
 import com.example.simplerecyclerview.data.DatabaseClass
 import com.facebook.stetho.Stetho
@@ -19,8 +18,6 @@ import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
-    private var db: DatabaseClass? = null
-    private var data: Dao? = null
     var tripsDB: DatabaseClass? = null
     private lateinit var simpleViewModel: SimpleViewModel
     private var tripsList: ArrayList<DataClass> = ArrayList()
@@ -33,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         tripsDB =
             Room.databaseBuilder(applicationContext, DatabaseClass::class.java, "Trips DB").build()
         Stetho.initializeWithDefaults(this)
+
         simpleViewModel = ViewModelProviders.of(this).get(SimpleViewModel::class.java)
 
         simpleRV.layoutManager = LinearLayoutManager(this)
@@ -42,7 +40,6 @@ class MainActivity : AppCompatActivity() {
             createPopUp(tripsDB)
 
         }
-
     }
 
     override fun onStart() {

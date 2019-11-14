@@ -19,14 +19,18 @@
 
 
             <ImageButton
+                android:id="@+id/three_dots_menuIBt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@android:color/background_light"
+                android:src="@drawable/baseline_more_vert_black_18dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.956"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.143" />
+                app:layout_constraintVertical_bias="0.143"
+                android:contentDescription="@string/threedotsmenu" />
 
             <TextView
                 android:id="@+id/endTextView"
