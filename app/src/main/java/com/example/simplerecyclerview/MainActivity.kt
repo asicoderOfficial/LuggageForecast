@@ -1,6 +1,7 @@
 package com.example.simplerecyclerview
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         Timber.plant()
         tripsDB =
             Room.databaseBuilder(applicationContext, DatabaseClass::class.java, "Trips DB").build()
+
         Stetho.initializeWithDefaults(this)
 
         simpleViewModel = ViewModelProviders.of(this).get(SimpleViewModel::class.java)
@@ -84,6 +86,10 @@ class MainActivity : AppCompatActivity() {
             popUpBuilder.setNegativeButton("CANCEL") { dialogInterface: DialogInterface, i: Int -> }
                 .create()
         dialog.show()
+
+        popUpInflater.startDateEditText.setOnClickListener {
+            
+        }
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             Thread {
                 val newTrip = DataClass(

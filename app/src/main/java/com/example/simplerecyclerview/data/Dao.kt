@@ -5,7 +5,7 @@ import androidx.room.Dao
 
 @Dao
 interface Dao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(newData: DataClass)
 
     @Delete

@@ -26,7 +26,11 @@ class SimpleAdapter(val tripsList: ArrayList<DataClass>, val context: Context) :
             popupMenu.inflate(R.menu.trip_cardview_menu)
             popupMenu.setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.eraseTrip -> Toast.makeText(context, "ERASE", Toast.LENGTH_SHORT).show()
+                    R.id.eraseTrip -> Toast.makeText(
+                        context,
+                        "ERASE " + it.itemId,
+                        Toast.LENGTH_SHORT
+                    ).show()
                     R.id.editTrip -> Toast.makeText(context, "EDIT", Toast.LENGTH_SHORT).show()
                 }
                 true
