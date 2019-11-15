@@ -1,6 +1,7 @@
 package com.example.simplerecyclerview
 
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
@@ -16,6 +17,9 @@ import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.popup_data.view.*
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -87,9 +91,9 @@ class MainActivity : AppCompatActivity() {
                 .create()
         dialog.show()
 
-        popUpInflater.startDateEditText.setOnClickListener {
-            
-        }
+        popUpInflater.startDateEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
+        popUpInflater.endDateEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
+
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             Thread {
                 val newTrip = DataClass(
