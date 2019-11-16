@@ -6,6 +6,8 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProviders
@@ -24,7 +26,6 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity() {
 
     var tripsDB: DatabaseClass? = null
-    private lateinit var simpleViewModel: SimpleViewModel
     private var tripsList: ArrayList<DataClass> = ArrayList()
     private lateinit var rvAdapter: SimpleAdapter
 
@@ -32,12 +33,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Timber.plant()
-        tripsDB =
-            Room.databaseBuilder(applicationContext, DatabaseClass::class.java, "Trips DB").build()
-
         Stetho.initializeWithDefaults(this)
 
-        simpleViewModel = ViewModelProviders.of(this).get(SimpleViewModel::class.java)
+        tripsDB =
+            Room.databaseBuilder(applicationContext, DatabaseClass::class.java, "Trips DB").build()
+        Thread {
+            if (tripsList.size != tripsDB!!.newDao().getNumberOfTrips()) {
+                tripsList = tripsDB!!.newDao().getAllTrips() as ArrayList<DataClass>
+                Timber.i("tripsList.size() = %s", tripsList.size)
+            }
+        }
 
         simpleRV.layoutManager = LinearLayoutManager(this)
         rvAdapter = SimpleAdapter(tripsList, this)

@@ -14,4 +14,10 @@ interface Dao {
     @Update
     fun update(newData: DataClass)
 
+    @Query("SELECT COUNT(Name) FROM Trips")
+    fun getNumberOfTrips(): Int
+
+    @Query("SELECT * FROM Trips")
+    fun getAllTrips(): List<DataClass>
+
 }

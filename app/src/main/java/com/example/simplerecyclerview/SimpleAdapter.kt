@@ -37,6 +37,7 @@ class SimpleAdapter(val tripsList: ArrayList<DataClass>, val context: Context) :
             }
             popupMenu.show()
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
