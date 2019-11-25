@@ -7,9 +7,11 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     var tripsDB: DatabaseClass? = null
     private var tripsList: ArrayList<DataClass> = ArrayList()
+    private lateinit var popUpInflater: View
     private lateinit var rvAdapter: SimpleAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,22 +37,27 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Timber.plant()
         Stetho.initializeWithDefaults(this)
+        simpleRV.layoutManager = LinearLayoutManager(this)
 
         tripsDB =
-            Room.databaseBuilder(applicationContext, DatabaseClass::class.java, "Trips DB").build()
-        Thread {
-            if (tripsList.size != tripsDB!!.newDao().getNumberOfTrips()) {
-                tripsList = tripsDB!!.newDao().getAllTrips() as ArrayList<DataClass>
-                Timber.i("tripsList.size() = %s", tripsList.size)
+            Room.databaseBuilder(applicationContext, DatabaseClass::class.java, "Trips DB")
+                .allowMainThreadQueries().build()
+
+        rvAdapter = SimpleAdapter(tripsList, this, object : RV_Methods {
+            override fun onItemEditClick(position: Int) {
+                tripPopUp(1, position)
             }
-        }
 
-        simpleRV.layoutManager = LinearLayoutManager(this)
-        rvAdapter = SimpleAdapter(tripsList, this)
+            override fun onItemEraseClick(position: Int) {
+                eraseTrip(position)
+            }
+        })
+        tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<DataClass>)
+
         simpleRV.adapter = rvAdapter
-        addBT.setOnClickListener {
-            createPopUp(tripsDB)
 
+        addBT.setOnClickListener {
+            tripPopUp(0, tripsList.size)
         }
     }
 
@@ -85,9 +93,11 @@ class MainActivity : AppCompatActivity() {
 
 
     @SuppressLint("InflateParams")
-    fun createPopUp(tripsDB: DatabaseClass?) {
-        val popUpBuilder = AlertDialog.Builder(this)
+    fun tripPopUp(actionPopUp: Int, position: Int) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
+        popUpInflater.startDateEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
+        popUpInflater.endDateEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
+        val popUpBuilder = AlertDialog.Builder(this)
         popUpBuilder.setView(popUpInflater)
         popUpBuilder.setCancelable(false)
         popUpBuilder.setPositiveButton("CREATE") { dialogInterface: DialogInterface, i: Int -> }
@@ -95,10 +105,13 @@ class MainActivity : AppCompatActivity() {
             popUpBuilder.setNegativeButton("CANCEL") { dialogInterface: DialogInterface, i: Int -> }
                 .create()
         dialog.show()
+        when (actionPopUp) {
+            0 -> addTripPopUp(dialog)
+            1 -> editTripPopUp(dialog, position)
+        }
+    }
 
-        popUpInflater.startDateEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
-        popUpInflater.endDateEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
-
+    fun addTripPopUp(dialog: AlertDialog) {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             Thread {
                 val newTrip = DataClass(
@@ -108,15 +121,36 @@ class MainActivity : AppCompatActivity() {
                     popUpInflater.endDateEditText.text.toString()
                 )
                 tripsList.add(newTrip)
-                if (tripsDB != null) {
-                    tripsDB.newDao().insert(newTrip)
-                }
+
+                tripsDB?.newDao()?.insert(newTrip)
             }.start()
-            rvAdapter.notifyItemInserted(tripsList.size - 1)
+            rvAdapter.notifyItemInserted(tripsList.size)
             dialog.dismiss()
         }
     }
 
+    fun editTripPopUp(dialog: AlertDialog, position: Int) {
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            Thread {
+                val newTrip = DataClass(
+                    popUpInflater.nameOfTripEditText.text.toString(),
+                    popUpInflater.destinyAutoCTV.text.toString(),
+                    popUpInflater.startDateEditText.text.toString(),
+                    popUpInflater.endDateEditText.text.toString()
+                )
+                tripsList.set(position, newTrip)
+                tripsDB?.newDao()?.update(newTrip)
+                rvAdapter.notifyDataSetChanged()
+            }.start()
+        }
+    }
+
+    fun eraseTrip(position: Int) {
+        tripsDB!!.newDao().delete(tripsList.get(position))
+        tripsList.remove(tripsList.get(position))
+        rvAdapter.notifyItemRemoved(position)
+        rvAdapter.notifyItemRangeChanged(position, tripsList.size)
+    }
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         Timber.i("onSaveInstanceState called")

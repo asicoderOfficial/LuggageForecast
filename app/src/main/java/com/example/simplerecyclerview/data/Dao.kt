@@ -1,5 +1,6 @@
 package com.example.simplerecyclerview.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.Dao
 
@@ -17,7 +18,6 @@ interface Dao {
     @Query("SELECT COUNT(Name) FROM Trips")
     fun getNumberOfTrips(): Int
 
-    @Query("SELECT * FROM Trips")
+    @Query("SELECT * FROM Trips ORDER BY Start DESC")
     fun getAllTrips(): List<DataClass>
-
 }

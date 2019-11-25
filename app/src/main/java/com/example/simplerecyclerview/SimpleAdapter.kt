@@ -9,14 +9,20 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplerecyclerview.data.DataClass
+import com.example.simplerecyclerview.data.DatabaseClass
 import kotlinx.android.synthetic.main.new_item.view.*
 import timber.log.Timber
 
-class SimpleAdapter(val tripsList: ArrayList<DataClass>, val context: Context) :
+class SimpleAdapter(
+    var tripsList: ArrayList<DataClass>,
+    val context: Context,
+    val rvMethods: RV_Methods
+) :
     RecyclerView.Adapter<ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Timber.i("onBindViewHolder called. Position: $position")
+        Toast.makeText(context, "onBindViewHolder called. Position: $position", Toast.LENGTH_LONG)
+            .show()
         holder.name.text = tripsList.get(position).name
         holder.destiny.text = tripsList.get(position).destination
         holder.start.text = tripsList.get(position).start
@@ -26,12 +32,9 @@ class SimpleAdapter(val tripsList: ArrayList<DataClass>, val context: Context) :
             popupMenu.inflate(R.menu.trip_cardview_menu)
             popupMenu.setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.eraseTrip -> Toast.makeText(
-                        context,
-                        "ERASE " + it.itemId,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    R.id.editTrip -> Toast.makeText(context, "EDIT", Toast.LENGTH_SHORT).show()
+                    R.id.eraseTrip -> rvMethods.onItemEraseClick(position)
+
+                    R.id.editTrip -> rvMethods.onItemEditClick(position)
                 }
                 true
             }
