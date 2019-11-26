@@ -19,22 +19,25 @@ import com.example.simplerecyclerview.data.DataClass
 import com.example.simplerecyclerview.data.DatabaseClass
 import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.new_item.view.*
 import kotlinx.android.synthetic.main.popup_data.view.*
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
     var tripsDB: DatabaseClass? = null
     private var tripsList: ArrayList<DataClass> = ArrayList()
-    private lateinit var popUpInflater: View
     private lateinit var rvAdapter: SimpleAdapter
+    private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         Timber.plant()
         Stetho.initializeWithDefaults(this)
         simpleRV.layoutManager = LinearLayoutManager(this)
@@ -45,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         rvAdapter = SimpleAdapter(tripsList, this, object : RV_Methods {
             override fun onItemEditClick(position: Int) {
-                tripPopUp(1, position)
+                editTripPopUp(position)
             }
 
             override fun onItemEraseClick(position: Int) {
@@ -57,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         simpleRV.adapter = rvAdapter
 
         addBT.setOnClickListener {
-            tripPopUp(0, tripsList.size)
+            addTripPopUp()
         }
     }
 
@@ -91,12 +94,18 @@ class MainActivity : AppCompatActivity() {
         Timber.i("onDestroy called")
     }
 
-
-    @SuppressLint("InflateParams")
-    fun tripPopUp(actionPopUp: Int, position: Int) {
+    fun addTripPopUp() {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
-        popUpInflater.startDateEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
-        popUpInflater.endDateEditText.setText(SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis()))
+        popUpInflater.startDateEditText.setText(
+            SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
+                System.currentTimeMillis()
+            )
+        )
+        popUpInflater.endDateEditText.setText(
+            SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
+                System.currentTimeMillis()
+            )
+        )
         val popUpBuilder = AlertDialog.Builder(this)
         popUpBuilder.setView(popUpInflater)
         popUpBuilder.setCancelable(false)
@@ -105,46 +114,89 @@ class MainActivity : AppCompatActivity() {
             popUpBuilder.setNegativeButton("CANCEL") { dialogInterface: DialogInterface, i: Int -> }
                 .create()
         dialog.show()
-        when (actionPopUp) {
-            0 -> addTripPopUp(dialog)
-            1 -> editTripPopUp(dialog, position)
-        }
-    }
-
-    fun addTripPopUp(dialog: AlertDialog) {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            Thread {
-                val newTrip = DataClass(
+            if (!textChecker(
                     popUpInflater.nameOfTripEditText.text.toString(),
                     popUpInflater.destinyAutoCTV.text.toString(),
                     popUpInflater.startDateEditText.text.toString(),
                     popUpInflater.endDateEditText.text.toString()
                 )
-                tripsList.add(newTrip)
+            )
+                dialog.dismiss()
+            else {
+                Thread {
+                    val newTrip = DataClass(
+                        popUpInflater.nameOfTripEditText.text.toString(),
+                        popUpInflater.destinyAutoCTV.text.toString(),
+                        popUpInflater.startDateEditText.text.toString(),
+                        popUpInflater.endDateEditText.text.toString()
+                    )
+                    tripsList.add(newTrip)
 
-                tripsDB?.newDao()?.insert(newTrip)
-            }.start()
-            rvAdapter.notifyItemInserted(tripsList.size)
-            dialog.dismiss()
+                    tripsDB?.newDao()?.insert(newTrip)
+                }.start()
+                rvAdapter.notifyItemInserted(tripsList.size)
+                dialog.dismiss()
+            }
         }
     }
 
-    fun editTripPopUp(dialog: AlertDialog, position: Int) {
+    fun editTripPopUp(position: Int) {
+        val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
+        popUpInflater.nameOfTripEditText.setText(tripsList.get(position).name)
+        popUpInflater.destinyAutoCTV.setText(tripsList.get(position).destination)
+        popUpInflater.startDateEditText.setText((tripsList.get(position).start))
+        popUpInflater.endDateEditText.setText((tripsList.get(position).end))
+        val popUpBuilder = AlertDialog.Builder(this)
+        popUpBuilder.setView(popUpInflater)
+        popUpBuilder.setCancelable(false)
+        popUpBuilder.setPositiveButton("CREATE") { dialogInterface: DialogInterface, i: Int -> }
+        val dialog: AlertDialog =
+            popUpBuilder.setNegativeButton("CANCEL") { dialogInterface: DialogInterface, i: Int -> }
+                .create()
+        dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            Thread {
-                val newTrip = DataClass(
+            if (!textChecker(
                     popUpInflater.nameOfTripEditText.text.toString(),
                     popUpInflater.destinyAutoCTV.text.toString(),
                     popUpInflater.startDateEditText.text.toString(),
                     popUpInflater.endDateEditText.text.toString()
                 )
-                tripsList.set(position, newTrip)
-                tripsDB?.newDao()?.update(newTrip)
+            )
+                dialog.dismiss()
+            else {
+                Thread {
+                    val newTrip = DataClass(
+                        popUpInflater.nameOfTripEditText.text.toString(),
+                        popUpInflater.destinyAutoCTV.text.toString(),
+                        popUpInflater.startDateEditText.text.toString(),
+                        popUpInflater.endDateEditText.text.toString()
+                    )
+                    tripsList.set(position, newTrip)
+                    tripsDB?.newDao()?.update(newTrip)
+                }.start()
                 rvAdapter.notifyDataSetChanged()
-            }.start()
+                dialog.dismiss()
+            }
         }
     }
 
+    fun textChecker(name: String, destiny: String, starting: String, ending: String): Boolean {
+        if (name == "")
+            Toast.makeText(this, "Name of trip can not be empty.", Toast.LENGTH_LONG).show()
+        else if (destiny == "")
+            Toast.makeText(this, "Name of destination can not be empty.", Toast.LENGTH_LONG).show()
+        else if (!DATE_PATTERN.matcher(starting).matches() || !DATE_PATTERN.matcher(ending).matches())
+            Toast.makeText(
+                this,
+                "Both dates must be in format:\ndd/mm/yyyy",
+                Toast.LENGTH_LONG
+            ).show()
+        else
+            return true
+        return false
+
+    }
     fun eraseTrip(position: Int) {
         tripsDB!!.newDao().delete(tripsList.get(position))
         tripsList.remove(tripsList.get(position))
