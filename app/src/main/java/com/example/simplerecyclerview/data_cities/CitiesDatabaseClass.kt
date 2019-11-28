@@ -21,9 +21,7 @@ abstract class CitiesDatabaseClass : RoomDatabase() {
                         CitiesDatabaseClass::class.java,
                         "CitiesDB"
                     ).allowMainThreadQueries()
-                        .createFromFile(
-                            File("C:\\Users\\asico\\AndroidStudioProjects\\SimpleRecyclerView\\app\\src\\main\\assets\\cities_ids_db.sqlite")
-                        )
+                        .createFromAsset("databases/cities_ids_db.sqlite")
                         .build()
                 }
             }
