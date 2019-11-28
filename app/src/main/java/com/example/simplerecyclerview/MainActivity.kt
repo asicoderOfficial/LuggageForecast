@@ -9,8 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
-import com.example.simplerecyclerview.data.DataClass
-import com.example.simplerecyclerview.data.DatabaseClass
+import com.example.simplerecyclerview.data_cities.CitiesDataClass
+import com.example.simplerecyclerview.data_cities.CitiesDatabaseClass
+import com.example.simplerecyclerview.data_trips.TripsDataClass
+import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
 import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.popup_data.view.*
@@ -25,12 +27,12 @@ import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
-    var tripsDB: DatabaseClass? = null
-    private var tripsList: ArrayList<DataClass> = ArrayList()
-    var citiesJSON_list: ArrayList<City> = ArrayList()
+    var tripsDB: TripsDatabaseClass? = null
+    var citiesDB: CitiesDatabaseClass? = null
+    private var tripsList: ArrayList<TripsDataClass> = ArrayList()
+    private var citiesList: ArrayList<String> = ArrayList()
     private lateinit var rvAdapter: SimpleAdapter
     private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
-    private val weatherClient = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +43,10 @@ class MainActivity : AppCompatActivity() {
         simpleRV.layoutManager = LinearLayoutManager(this)
 
         tripsDB =
-            Room.databaseBuilder(applicationContext, DatabaseClass::class.java, "Trips DB")
+            Room.databaseBuilder(applicationContext, TripsDatabaseClass::class.java, "Trips DB")
                 .allowMainThreadQueries().build()
+        citiesDB =
+            CitiesDatabaseClass.getAppDataBase(this)
 
         rvAdapter = SimpleAdapter(tripsList, this, object : RV_Methods {
             override fun onItemEditClick(position: Int) {
@@ -53,19 +57,21 @@ class MainActivity : AppCompatActivity() {
                 eraseTrip(position)
             }
         })
-        tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<DataClass>)
+        tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
+        citiesList.addAll(citiesDB!!.citiesDao().getAllSortedByCity() as ArrayList<String>)
 
         simpleRV.adapter = rvAdapter
 
-        parser("http://bulk.openweathermap.org/sample/city.list.json.gz")
+        //parser("http://bulk.openweathermap.org/sample/city.list.json.gz")
+
         val autoCompleteAdapter =
-            ArrayAdapter(this, android.R.layout.simple_list_item_1, citiesJSON_list)
+            ArrayAdapter(this, android.R.layout.simple_list_item_1, citiesList)
         addBT.setOnClickListener {
             addTripPopUp(autoCompleteAdapter)
         }
     }
 
-    fun parser(url: String) {
+    /*fun parser(url: String) {
         val request = Request.Builder().url(url).build()
 
         weatherClient.newCall(request).enqueue(object : Callback {
@@ -97,9 +103,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-    }
+    }*/
 
-    fun addTripPopUp(autoCompleteAdapter: ArrayAdapter<City>) {
+    fun addTripPopUp(autoCompleteAdapter: ArrayAdapter<String>) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
         popUpInflater.startDateEditText.setText(
             SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
@@ -111,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                 System.currentTimeMillis()
             )
         )
-        popUpInflater.destinyAutoCTV.threshold = 0
+        popUpInflater.destinyAutoCTV.threshold = 1
         popUpInflater.destinyAutoCTV.setAdapter(autoCompleteAdapter)
 
         val popUpBuilder = AlertDialog.Builder(this)
@@ -133,7 +139,7 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
             else {
                 Thread {
-                    val newTrip = DataClass(
+                    val newTrip = TripsDataClass(
                         popUpInflater.nameOfTripEditText.text.toString(),
                         popUpInflater.destinyAutoCTV.text.toString(),
                         popUpInflater.startDateEditText.text.toString(),
@@ -174,7 +180,7 @@ class MainActivity : AppCompatActivity() {
                 dialog.dismiss()
             else {
                 Thread {
-                    val newTrip = DataClass(
+                    val newTrip = TripsDataClass(
                         popUpInflater.nameOfTripEditText.text.toString(),
                         popUpInflater.destinyAutoCTV.text.toString(),
                         popUpInflater.startDateEditText.text.toString(),

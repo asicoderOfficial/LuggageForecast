@@ -1,20 +1,18 @@
 package com.example.simplerecyclerview
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.simplerecyclerview.data.DataClass
-import com.example.simplerecyclerview.data.DatabaseClass
+import com.example.simplerecyclerview.data_trips.TripsDataClass
 import kotlinx.android.synthetic.main.new_item.view.*
 import timber.log.Timber
 
 class SimpleAdapter(
-    var tripsList: ArrayList<DataClass>,
+    var tripsList: ArrayList<TripsDataClass>,
     val context: Context,
     val rvMethods: RV_Methods
 ) :

@@ -1,23 +1,23 @@
-package com.example.simplerecyclerview.data
+package com.example.simplerecyclerview.data_trips
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [DataClass::class], version = 1)
-abstract class DatabaseClass : RoomDatabase() {
-    abstract fun newDao(): Dao
+@Database(entities = [TripsDataClass::class], version = 1)
+abstract class TripsDatabaseClass : RoomDatabase() {
+    abstract fun newDao(): TripsDao
 
     companion object {
-        var INSTANCE: DatabaseClass? = null
+        var INSTANCE: TripsDatabaseClass? = null
 
-        fun getAppDataBase(context: Context): DatabaseClass? {
+        fun getAppDataBase(context: Context): TripsDatabaseClass? {
             if (INSTANCE == null) {
-                synchronized(DatabaseClass::class) {
+                synchronized(TripsDatabaseClass::class) {
                     INSTANCE = Room.databaseBuilder(
                         context.applicationContext,
-                        DatabaseClass::class.java,
+                        TripsDatabaseClass::class.java,
                         "TripsDB"
                     ).build()
                 }

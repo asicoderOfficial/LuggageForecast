@@ -26,14 +26,16 @@ android {
 }
 
 dependencies {
+    def roomVersion = "2.2.2"
     //Stetho
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
 
     // Room
-    implementation 'android.arch.persistence.room:runtime:1.1.1'
-    implementation 'android.arch.persistence.room:rxjava2:1.1.1'
-    kapt "android.arch.persistence.room:compiler:1.1.1"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    //implementation 'android.arch.persistence.room:runtime:1.1.1'
+    //implementation 'android.arch.persistence.room:rxjava2:1.1.1'
 
     // RXJava
     implementation 'io.reactivex.rxjava2:rxjava:2.1.0'

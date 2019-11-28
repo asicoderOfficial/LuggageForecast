@@ -1,11 +1,11 @@
-package com.example.simplerecyclerview.data
+package com.example.simplerecyclerview.data_trips
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "Trips")
-data class DataClass(
+data class TripsDataClass(
     @PrimaryKey
     @ColumnInfo(name = "Name")
     val name: String,
