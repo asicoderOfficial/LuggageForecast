@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import java.io.File
 
 @Database(entities = [CitiesDataClass::class], version = 1)
 abstract class CitiesDatabaseClass : RoomDatabase() {
@@ -19,9 +18,9 @@ abstract class CitiesDatabaseClass : RoomDatabase() {
                     INSTANCE = Room.databaseBuilder(
                         context.applicationContext,
                         CitiesDatabaseClass::class.java,
-                        "CitiesDB"
+                        "CITIES"
                     ).allowMainThreadQueries()
-                        .createFromAsset("databases/cities_ids_db.sqlite")
+                        .createFromAsset("databases/stations_db.sqlite")
                         .build()
                 }
             }

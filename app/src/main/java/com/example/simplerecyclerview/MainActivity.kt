@@ -57,11 +57,12 @@ class MainActivity : AppCompatActivity() {
                 eraseTrip(position)
             }
         })
+
         tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
         citiesList.addAll(citiesDB!!.citiesDao().getAllSortedByCity() as ArrayList<String>)
+        Toast.makeText(this, "NUMBER OF CITIES: " + citiesList.size, Toast.LENGTH_LONG).show()
 
         simpleRV.adapter = rvAdapter
-
         //parser("http://bulk.openweathermap.org/sample/city.list.json.gz")
 
         val autoCompleteAdapter =
