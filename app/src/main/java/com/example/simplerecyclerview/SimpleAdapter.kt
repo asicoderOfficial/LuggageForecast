@@ -19,8 +19,6 @@ class SimpleAdapter(
     RecyclerView.Adapter<ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Toast.makeText(context, "onBindViewHolder called. Position: $position", Toast.LENGTH_LONG)
-            .show()
         holder.name.text = tripsList.get(position).name
         holder.destiny.text = tripsList.get(position).destination
         holder.start.text = tripsList.get(position).start
