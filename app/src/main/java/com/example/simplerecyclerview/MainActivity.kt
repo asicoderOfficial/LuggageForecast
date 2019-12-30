@@ -9,18 +9,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
+import com.example.simplerecyclerview.OkHTTP.OkHttpRequest
 import com.example.simplerecyclerview.data_cities.CitiesDataClass
 import com.example.simplerecyclerview.data_cities.CitiesDatabaseClass
 import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
 import com.facebook.stetho.Stetho
+import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.popup_data.view.*
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
-import java.io.IOException
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -29,8 +31,9 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity() {
     var tripsDB: TripsDatabaseClass? = null
     var citiesDB: CitiesDatabaseClass? = null
+    var citiesList = ArrayList<String>()
+    var cities_id_map = HashMap<String, String>()
     private var tripsList: ArrayList<TripsDataClass> = ArrayList()
-    private var citiesList: ArrayList<String> = ArrayList()
     private lateinit var rvAdapter: SimpleAdapter
     private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
 
@@ -46,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             Room.databaseBuilder(applicationContext, TripsDatabaseClass::class.java, "Trips DB")
                 .allowMainThreadQueries().build()
         citiesDB =
-            CitiesDatabaseClass.getAppDataBase(this)
+            CitiesDatabaseClass.getAppDataBase(applicationContext)
 
         rvAdapter = SimpleAdapter(tripsList, this, object : RV_Methods {
             override fun onItemEditClick(position: Int) {
@@ -59,52 +62,23 @@ class MainActivity : AppCompatActivity() {
         })
 
         tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
-        citiesList.addAll(citiesDB!!.citiesDao().getAllSortedByCity() as ArrayList<String>)
+
+        val bfr = BufferedReader(InputStreamReader(assets.open("city_id.txt")))
+        bfr.forEachLine {
+            var pair = it.split(" ")
+            citiesList.add(pair[1])
+            cities_id_map.put(pair[1], pair[0])
+        }
+
         Toast.makeText(this, "NUMBER OF CITIES: " + citiesList.size, Toast.LENGTH_LONG).show()
 
         simpleRV.adapter = rvAdapter
-        //parser("http://bulk.openweathermap.org/sample/city.list.json.gz")
-
         val autoCompleteAdapter =
             ArrayAdapter(this, android.R.layout.simple_list_item_1, citiesList)
         addBT.setOnClickListener {
             addTripPopUp(autoCompleteAdapter)
         }
     }
-
-    /*fun parser(url: String) {
-        val request = Request.Builder().url(url).build()
-
-        weatherClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Toast.makeText(
-                    applicationContext,
-                    "Failed while trying to access json file.",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val str_response = response.body()!!.string()
-                val jsonCity = JSONObject(str_response)
-                val jsonArrayCities: JSONArray = jsonCity.getJSONArray("")
-                val size: Int = jsonArrayCities.length()
-                lateinit var jsonCityDetail: JSONObject
-                lateinit var city: City
-                for (i in 0 until size) {
-                    jsonCityDetail = jsonArrayCities.getJSONObject(i)
-                    city = City(
-                        jsonCityDetail.getInt("id"),
-                        jsonCityDetail.getString("name"),
-                        jsonCityDetail.getString("country"),
-                        jsonCityDetail.getInt("lon"),
-                        jsonCityDetail.getInt("lat")
-                    )
-                    citiesJSON_list.add(city)
-                }
-            }
-        })
-    }*/
 
     fun addTripPopUp(autoCompleteAdapter: ArrayAdapter<String>) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
@@ -118,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                 System.currentTimeMillis()
             )
         )
-        popUpInflater.destinyAutoCTV.threshold = 1
+        popUpInflater.destinyAutoCTV.threshold = 0
         popUpInflater.destinyAutoCTV.setAdapter(autoCompleteAdapter)
 
         val popUpBuilder = AlertDialog.Builder(this)

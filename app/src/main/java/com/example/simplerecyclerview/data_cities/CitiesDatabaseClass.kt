@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import java.io.File
 
-@Database(entities = [CitiesDataClass::class], version = 1)
+@Database(entities = [CitiesDataClass::class], version = 2, exportSchema = true)
 abstract class CitiesDatabaseClass : RoomDatabase() {
     abstract fun citiesDao(): CitiesDao
 
@@ -20,7 +21,8 @@ abstract class CitiesDatabaseClass : RoomDatabase() {
                         CitiesDatabaseClass::class.java,
                         "CITIES"
                     ).allowMainThreadQueries()
-                        .createFromAsset("databases/stations_db.sqlite")
+                        .createFromFile(File("C:\\Users\\asico\\AndroidStudioProjects\\SimpleRecyclerView\\app\\src\\main\\assets\\databases\\cities_SQL.sql"))
+                        .fallbackToDestructiveMigration()
                         .build()
                 }
             }

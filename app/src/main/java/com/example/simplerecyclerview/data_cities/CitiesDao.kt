@@ -6,9 +6,9 @@ import androidx.room.Query
 @Dao
 interface CitiesDao {
 
-    @Query("SELECT COUNT(CITY) FROM CITIES")
+    @Query("SELECT COUNT(CITY) FROM cities")
     fun getNumberOfCities(): Int
 
-    @Query("SELECT CITY FROM CITIES ORDER BY CITY DESC")
+    @Query("SELECT CITY FROM cities ORDER BY CITY DESC")
     fun getAllSortedByCity(): List<String>
 }
