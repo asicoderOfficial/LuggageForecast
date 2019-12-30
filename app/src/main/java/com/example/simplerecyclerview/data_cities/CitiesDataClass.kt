@@ -11,11 +11,5 @@ data class CitiesDataClass(
     @ColumnInfo(name = "ID")
     val id: Int? = null,
     @ColumnInfo(name = "CITY")
-    val city: String? = null,
-    @ColumnInfo(name = "COUNTRY")
-    val country: String? = null,
-    @ColumnInfo(name = "LON")
-    val lon: Float? = null,
-    @ColumnInfo(name = "LAT")
-    val lat: Float? = null
+    val city: String? = null
 )

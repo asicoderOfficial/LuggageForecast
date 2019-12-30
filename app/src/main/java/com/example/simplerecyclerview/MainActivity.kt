@@ -9,18 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
-import com.example.simplerecyclerview.OkHTTP.OkHttpRequest
-import com.example.simplerecyclerview.data_cities.CitiesDataClass
 import com.example.simplerecyclerview.data_cities.CitiesDatabaseClass
 import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
 import com.facebook.stetho.Stetho
-import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.popup_data.view.*
-import okhttp3.*
-import org.json.JSONArray
-import org.json.JSONObject
 import timber.log.Timber
 import java.io.*
 import java.text.SimpleDateFormat
@@ -30,11 +24,14 @@ import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     var tripsDB: TripsDatabaseClass? = null
-    var citiesDB: CitiesDatabaseClass? = null
-    var citiesList = ArrayList<String>()
-    var cities_id_map = HashMap<String, String>()
     private var tripsList: ArrayList<TripsDataClass> = ArrayList()
+
+    private var citiesDB: CitiesDatabaseClass? = null
+    private var citiesList = ArrayList<String>()
+    private var citiesIdMap = HashMap<String, String>()
+
     private lateinit var rvAdapter: SimpleAdapter
+
     private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,12 +62,10 @@ class MainActivity : AppCompatActivity() {
 
         val bfr = BufferedReader(InputStreamReader(assets.open("city_id.txt")))
         bfr.forEachLine {
-            var pair = it.split(" ")
+            val pair = it.split(" ")
             citiesList.add(pair[1])
-            cities_id_map.put(pair[1], pair[0])
+            citiesIdMap.put(pair[1], pair[0])
         }
-
-        Toast.makeText(this, "NUMBER OF CITIES: " + citiesList.size, Toast.LENGTH_LONG).show()
 
         simpleRV.adapter = rvAdapter
         val autoCompleteAdapter =
@@ -80,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun addTripPopUp(autoCompleteAdapter: ArrayAdapter<String>) {
+    private fun addTripPopUp(autoCompleteAdapter: ArrayAdapter<String>) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
         popUpInflater.startDateEditText.setText(
             SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
@@ -98,9 +93,9 @@ class MainActivity : AppCompatActivity() {
         val popUpBuilder = AlertDialog.Builder(this)
         popUpBuilder.setView(popUpInflater)
         popUpBuilder.setCancelable(false)
-        popUpBuilder.setPositiveButton("CREATE") { dialogInterface: DialogInterface, i: Int -> }
+        popUpBuilder.setPositiveButton("CREATE") { _: DialogInterface, _: Int -> }
         val dialog: AlertDialog =
-            popUpBuilder.setNegativeButton("CANCEL") { dialogInterface: DialogInterface, i: Int -> }
+            popUpBuilder.setNegativeButton("CANCEL") { _: DialogInterface, _: Int -> }
                 .create()
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
@@ -116,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                 Thread {
                     val newTrip = TripsDataClass(
                         popUpInflater.nameOfTripEditText.text.toString(),
-                        popUpInflater.destinyAutoCTV.text.toString(),
+                        citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()].toString(),
                         popUpInflater.startDateEditText.text.toString(),
                         popUpInflater.endDateEditText.text.toString()
                     )
@@ -132,16 +127,16 @@ class MainActivity : AppCompatActivity() {
 
     fun editTripPopUp(position: Int) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
-        popUpInflater.nameOfTripEditText.setText(tripsList.get(position).name)
-        popUpInflater.destinyAutoCTV.setText(tripsList.get(position).destination)
-        popUpInflater.startDateEditText.setText((tripsList.get(position).start))
-        popUpInflater.endDateEditText.setText((tripsList.get(position).end))
+        popUpInflater.nameOfTripEditText.setText(tripsList[position].name)
+        popUpInflater.destinyAutoCTV.setText(tripsList[position].destination)
+        popUpInflater.startDateEditText.setText((tripsList[position].start))
+        popUpInflater.endDateEditText.setText((tripsList[position].end))
         val popUpBuilder = AlertDialog.Builder(this)
         popUpBuilder.setView(popUpInflater)
         popUpBuilder.setCancelable(false)
-        popUpBuilder.setPositiveButton("CREATE") { dialogInterface: DialogInterface, i: Int -> }
+        popUpBuilder.setPositiveButton("CREATE") { _: DialogInterface, _: Int -> }
         val dialog: AlertDialog =
-            popUpBuilder.setNegativeButton("CANCEL") { dialogInterface: DialogInterface, i: Int -> }
+            popUpBuilder.setNegativeButton("CANCEL") { _: DialogInterface, _: Int -> }
                 .create()
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
@@ -161,7 +156,7 @@ class MainActivity : AppCompatActivity() {
                         popUpInflater.startDateEditText.text.toString(),
                         popUpInflater.endDateEditText.text.toString()
                     )
-                    tripsList.set(position, newTrip)
+                    tripsList[position] = newTrip
                     tripsDB?.newDao()?.update(newTrip)
                 }.start()
                 rvAdapter.notifyDataSetChanged()
@@ -170,11 +165,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun textChecker(name: String, destiny: String, starting: String, ending: String): Boolean {
+    private fun textChecker(
+        name: String,
+        destiny: String,
+        starting: String,
+        ending: String
+    ): Boolean {
         if (name == "")
             Toast.makeText(this, "Name of trip can not be empty.", Toast.LENGTH_LONG).show()
-        else if (destiny == "")
-            Toast.makeText(this, "Name of destination can not be empty.", Toast.LENGTH_LONG).show()
+        else if (!citiesIdMap.containsKey(destiny))
+            Toast.makeText(this, "Destination does not exist.", Toast.LENGTH_LONG).show()
         else if (!DATE_PATTERN.matcher(starting).matches() || !DATE_PATTERN.matcher(ending).matches())
             Toast.makeText(
                 this,
@@ -188,8 +188,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun eraseTrip(position: Int) {
-        tripsDB!!.newDao().delete(tripsList.get(position))
-        tripsList.remove(tripsList.get(position))
+        tripsDB!!.newDao().delete(tripsList[position])
+        tripsList.remove(tripsList[position])
         rvAdapter.notifyItemRemoved(position)
         rvAdapter.notifyItemRangeChanged(position, tripsList.size)
     }
