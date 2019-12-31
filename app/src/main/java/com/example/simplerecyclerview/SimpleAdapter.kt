@@ -12,17 +12,17 @@ import kotlinx.android.synthetic.main.new_item.view.*
 import timber.log.Timber
 
 class SimpleAdapter(
-    var tripsList: ArrayList<TripsDataClass>,
-    val context: Context,
-    val rvMethods: RV_Methods
+    private var tripsList: ArrayList<TripsDataClass>,
+    private val context: Context,
+    private val rvMethods: RV_Methods
 ) :
     RecyclerView.Adapter<ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.name.text = tripsList.get(position).name
-        holder.destiny.text = tripsList.get(position).destination
-        holder.start.text = tripsList.get(position).start
-        holder.end.text = tripsList.get(position).end
+        holder.name.text = tripsList[position].name
+        holder.destiny.text = tripsList[position].destinationName
+        holder.start.text = tripsList[position].start
+        holder.end.text = tripsList[position].end
         holder.menuCardView.setOnClickListener {
             val popupMenu = PopupMenu(context, holder.menuCardView)
             popupMenu.inflate(R.menu.trip_cardview_menu)
