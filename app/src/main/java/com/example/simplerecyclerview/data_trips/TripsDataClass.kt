@@ -9,8 +9,10 @@ data class TripsDataClass(
     @PrimaryKey
     @ColumnInfo(name = "Name")
     val name: String,
-    @ColumnInfo(name = "Destination")
-    val destination: String,
+    @ColumnInfo(name = "Destination Name")
+    val destinationName: String,
+    @ColumnInfo(name = "Destination ID")
+    val destinationID: String,
     @ColumnInfo(name = "Start")
     val start: String,
     @ColumnInfo(name = "End")

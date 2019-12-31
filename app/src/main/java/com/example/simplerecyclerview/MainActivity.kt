@@ -1,5 +1,6 @@
 package com.example.simplerecyclerview
 
+import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -9,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
-import com.example.simplerecyclerview.data_cities.CitiesDatabaseClass
 import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
 import com.facebook.stetho.Stetho
@@ -25,8 +25,6 @@ import kotlin.collections.ArrayList
 class MainActivity : AppCompatActivity() {
     var tripsDB: TripsDatabaseClass? = null
     private var tripsList: ArrayList<TripsDataClass> = ArrayList()
-
-    private var citiesDB: CitiesDatabaseClass? = null
     private var citiesList = ArrayList<String>()
     private var citiesIdMap = HashMap<String, String>()
 
@@ -42,11 +40,9 @@ class MainActivity : AppCompatActivity() {
         Stetho.initializeWithDefaults(this)
         simpleRV.layoutManager = LinearLayoutManager(this)
 
-        tripsDB =
-            Room.databaseBuilder(applicationContext, TripsDatabaseClass::class.java, "Trips DB")
-                .allowMainThreadQueries().build()
-        citiesDB =
-            CitiesDatabaseClass.getAppDataBase(applicationContext)
+        bufferer()
+
+        tripsDB = TripsDatabaseClass.getAppDataBase(this)
 
         rvAdapter = SimpleAdapter(tripsList, this, object : RV_Methods {
             override fun onItemEditClick(position: Int) {
@@ -59,13 +55,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
-
-        val bfr = BufferedReader(InputStreamReader(assets.open("city_id.txt")))
-        bfr.forEachLine {
-            val pair = it.split(" ")
-            citiesList.add(pair[1])
-            citiesIdMap.put(pair[1], pair[0])
-        }
 
         simpleRV.adapter = rvAdapter
         val autoCompleteAdapter =
@@ -111,7 +100,8 @@ class MainActivity : AppCompatActivity() {
                 Thread {
                     val newTrip = TripsDataClass(
                         popUpInflater.nameOfTripEditText.text.toString(),
-                        citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()].toString(),
+                        popUpInflater.destinyAutoCTV.text.toString(),
+                        citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!,
                         popUpInflater.startDateEditText.text.toString(),
                         popUpInflater.endDateEditText.text.toString()
                     )
@@ -128,7 +118,7 @@ class MainActivity : AppCompatActivity() {
     fun editTripPopUp(position: Int) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
         popUpInflater.nameOfTripEditText.setText(tripsList[position].name)
-        popUpInflater.destinyAutoCTV.setText(tripsList[position].destination)
+        popUpInflater.destinyAutoCTV.setText(tripsList[position].destinationName)
         popUpInflater.startDateEditText.setText((tripsList[position].start))
         popUpInflater.endDateEditText.setText((tripsList[position].end))
         val popUpBuilder = AlertDialog.Builder(this)
@@ -153,6 +143,7 @@ class MainActivity : AppCompatActivity() {
                     val newTrip = TripsDataClass(
                         popUpInflater.nameOfTripEditText.text.toString(),
                         popUpInflater.destinyAutoCTV.text.toString(),
+                        citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!,
                         popUpInflater.startDateEditText.text.toString(),
                         popUpInflater.endDateEditText.text.toString()
                     )
@@ -185,6 +176,15 @@ class MainActivity : AppCompatActivity() {
             return true
         return false
 
+    }
+
+    fun bufferer() {
+        val bfr = BufferedReader(InputStreamReader(assets.open("city_id.txt")))
+        bfr.forEachLine {
+            val pair = it.split(" ")
+            citiesList.add(pair[1])
+            citiesIdMap.put(pair[1], pair[0])
+        }
     }
 
     fun eraseTrip(position: Int) {
