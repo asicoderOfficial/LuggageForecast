@@ -1,11 +1,14 @@
 package com.example.simplerecyclerview
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.DialogInterface
+import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +17,7 @@ import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
 import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.popup_data.*
 import kotlinx.android.synthetic.main.popup_data.view.*
 import timber.log.Timber
 import java.io.*
@@ -31,7 +35,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var rvAdapter: SimpleAdapter
 
     private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
+    private var formate = SimpleDateFormat("dd MMM, YYYY", Locale.US)
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -64,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun addTripPopUp(autoCompleteAdapter: ArrayAdapter<String>) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
         popUpInflater.startDateTV.text = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
@@ -72,6 +79,12 @@ class MainActivity : AppCompatActivity() {
         popUpInflater.endDateTV.text = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
             System.currentTimeMillis()
         )
+        popUpInflater.startDateTV.setOnClickListener {
+            popUpInflater.startDateTV.text = showDatePicker()
+        }
+        popUpInflater.endDateTV.setOnClickListener {
+            popUpInflater.endDateTV.text = showDatePicker()
+        }
         popUpInflater.destinyAutoCTV.threshold = 0
         popUpInflater.destinyAutoCTV.setAdapter(autoCompleteAdapter)
 
@@ -111,6 +124,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     fun editTripPopUp(position: Int) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
         popUpInflater.nameOfTripEditText.setText(tripsList[position].name)
@@ -120,10 +134,16 @@ class MainActivity : AppCompatActivity() {
         val popUpBuilder = AlertDialog.Builder(this)
         popUpBuilder.setView(popUpInflater)
         popUpBuilder.setCancelable(false)
-        popUpBuilder.setPositiveButton("CREATE") { _: DialogInterface, _: Int -> }
+        popUpBuilder.setPositiveButton("SAVE") { _: DialogInterface, _: Int -> }
         val dialog: AlertDialog =
             popUpBuilder.setNegativeButton("CANCEL") { _: DialogInterface, _: Int -> }
                 .create()
+        popUpInflater.startDateTV.setOnClickListener {
+            popUpInflater.startDateTV.text = showDatePicker()
+        }
+        popUpInflater.endDateTV.setOnClickListener {
+            popUpInflater.endDateTV.text = showDatePicker()
+        }
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             if (!textChecker(
@@ -158,16 +178,22 @@ class MainActivity : AppCompatActivity() {
         starting: String,
         ending: String
     ): Boolean {
+        val dateStarting = Date(starting)
+        val dateEnding = Date(ending)
         if (name == "")
             Toast.makeText(this, "Name of trip can not be empty.", Toast.LENGTH_LONG).show()
         else if (!citiesIdMap.containsKey(destiny))
             Toast.makeText(this, "Destination does not exist.", Toast.LENGTH_LONG).show()
-        else if (!DATE_PATTERN.matcher(starting).matches() || !DATE_PATTERN.matcher(ending).matches())
+        else if (!DATE_PATTERN.matcher(starting).matches()
+            || !DATE_PATTERN.matcher(ending).matches()
+        )
             Toast.makeText(
                 this,
                 "Both dates must be in format:\ndd/mm/yyyy",
                 Toast.LENGTH_LONG
             ).show()
+        else if (dateEnding.before(dateStarting))
+            Toast.makeText(this, "Trip can not end before it starts.", Toast.LENGTH_LONG).show()
         else
             return true
         return false
@@ -183,6 +209,26 @@ class MainActivity : AppCompatActivity() {
         citiesList = ArrayList(citiesIdMap.keys)
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun showDatePicker(): String? {
+        val currently = Calendar.getInstance()
+        var date: String? = null
+        val datePicker = DatePickerDialog(
+            this,
+            DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                val selectedDate = Calendar.getInstance()
+                selectedDate.set(Calendar.YEAR, year)
+                selectedDate.set(Calendar.MONTH, month)
+                selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                date = formate.format(selectedDate.time)
+            },
+            currently.get(Calendar.YEAR),
+            currently.get(Calendar.MONTH),
+            currently.get(Calendar.DAY_OF_MONTH)
+        )
+        datePicker.show()
+        return date
+    }
     fun eraseTrip(position: Int) {
         tripsDB!!.newDao().delete(tripsList[position])
         tripsList.remove(tripsList[position])
