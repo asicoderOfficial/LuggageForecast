@@ -66,15 +66,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun addTripPopUp(autoCompleteAdapter: ArrayAdapter<String>) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
-        popUpInflater.startDateEditText.setText(
-            SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
-                System.currentTimeMillis()
-            )
+        popUpInflater.startDateTV.text = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
+            System.currentTimeMillis()
         )
-        popUpInflater.endDateEditText.setText(
-            SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
-                System.currentTimeMillis()
-            )
+        popUpInflater.endDateTV.text = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
+            System.currentTimeMillis()
         )
         popUpInflater.destinyAutoCTV.threshold = 0
         popUpInflater.destinyAutoCTV.setAdapter(autoCompleteAdapter)
@@ -91,8 +87,8 @@ class MainActivity : AppCompatActivity() {
             if (!textChecker(
                     popUpInflater.nameOfTripEditText.text.toString(),
                     popUpInflater.destinyAutoCTV.text.toString(),
-                    popUpInflater.startDateEditText.text.toString(),
-                    popUpInflater.endDateEditText.text.toString()
+                    popUpInflater.startDateTV.text.toString(),
+                    popUpInflater.endDateTV.text.toString()
                 )
             )
                 dialog.dismiss()
@@ -102,8 +98,8 @@ class MainActivity : AppCompatActivity() {
                         popUpInflater.nameOfTripEditText.text.toString(),
                         popUpInflater.destinyAutoCTV.text.toString(),
                         citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!,
-                        popUpInflater.startDateEditText.text.toString(),
-                        popUpInflater.endDateEditText.text.toString()
+                        popUpInflater.startDateTV.text.toString(),
+                        popUpInflater.endDateTV.text.toString()
                     )
                     tripsList.add(newTrip)
 
@@ -119,8 +115,8 @@ class MainActivity : AppCompatActivity() {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
         popUpInflater.nameOfTripEditText.setText(tripsList[position].name)
         popUpInflater.destinyAutoCTV.setText(tripsList[position].destinationName)
-        popUpInflater.startDateEditText.setText((tripsList[position].start))
-        popUpInflater.endDateEditText.setText((tripsList[position].end))
+        popUpInflater.startDateTV.text = (tripsList[position].start)
+        popUpInflater.endDateTV.text = (tripsList[position].end)
         val popUpBuilder = AlertDialog.Builder(this)
         popUpBuilder.setView(popUpInflater)
         popUpBuilder.setCancelable(false)
@@ -133,8 +129,8 @@ class MainActivity : AppCompatActivity() {
             if (!textChecker(
                     popUpInflater.nameOfTripEditText.text.toString(),
                     popUpInflater.destinyAutoCTV.text.toString(),
-                    popUpInflater.startDateEditText.text.toString(),
-                    popUpInflater.endDateEditText.text.toString()
+                    popUpInflater.startDateTV.text.toString(),
+                    popUpInflater.endDateTV.text.toString()
                 )
             )
                 dialog.dismiss()
@@ -144,8 +140,8 @@ class MainActivity : AppCompatActivity() {
                         popUpInflater.nameOfTripEditText.text.toString(),
                         popUpInflater.destinyAutoCTV.text.toString(),
                         citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!,
-                        popUpInflater.startDateEditText.text.toString(),
-                        popUpInflater.endDateEditText.text.toString()
+                        popUpInflater.startDateTV.text.toString(),
+                        popUpInflater.endDateTV.text.toString()
                     )
                     tripsList[position] = newTrip
                     tripsDB?.newDao()?.update(newTrip)
@@ -178,13 +174,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun bufferer() {
+    private fun bufferer() {
         val bfr = BufferedReader(InputStreamReader(assets.open("city_id.txt")))
         bfr.forEachLine {
             val pair = it.split(" ")
-            citiesList.add(pair[1])
-            citiesIdMap.put(pair[1], pair[0])
+            citiesIdMap[pair[1]] = pair[0]
         }
+        citiesList = ArrayList(citiesIdMap.keys)
     }
 
     fun eraseTrip(position: Int) {
