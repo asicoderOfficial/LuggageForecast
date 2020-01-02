@@ -6,11 +6,13 @@ import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatViewInflater
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.example.simplerecyclerview.data_trips.TripsDataClass
@@ -35,7 +37,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var rvAdapter: SimpleAdapter
 
     private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
-    private var formate = SimpleDateFormat("dd MMM, YYYY", Locale.US)
+    private var formate =
+        SimpleDateFormat("dd/MM/YYYY", Locale.US).format(System.currentTimeMillis())
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,10 +83,10 @@ class MainActivity : AppCompatActivity() {
             System.currentTimeMillis()
         )
         popUpInflater.startDateTV.setOnClickListener {
-            popUpInflater.startDateTV.text = showDatePicker()
+            showDatePicker(popUpInflater, 1)
         }
         popUpInflater.endDateTV.setOnClickListener {
-            popUpInflater.endDateTV.text = showDatePicker()
+            showDatePicker(popUpInflater, 2)
         }
         popUpInflater.destinyAutoCTV.threshold = 0
         popUpInflater.destinyAutoCTV.setAdapter(autoCompleteAdapter)
@@ -139,10 +142,10 @@ class MainActivity : AppCompatActivity() {
             popUpBuilder.setNegativeButton("CANCEL") { _: DialogInterface, _: Int -> }
                 .create()
         popUpInflater.startDateTV.setOnClickListener {
-            popUpInflater.startDateTV.text = showDatePicker()
+            showDatePicker(popUpInflater, 1)
         }
         popUpInflater.endDateTV.setOnClickListener {
-            popUpInflater.endDateTV.text = showDatePicker()
+            showDatePicker(popUpInflater, 2)
         }
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
@@ -210,9 +213,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun showDatePicker(): String? {
+    private fun showDatePicker(popupInflater: View, i: Int) {
         val currently = Calendar.getInstance()
-        var date: String? = null
         val datePicker = DatePickerDialog(
             this,
             DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
@@ -220,14 +222,18 @@ class MainActivity : AppCompatActivity() {
                 selectedDate.set(Calendar.YEAR, year)
                 selectedDate.set(Calendar.MONTH, month)
                 selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                date = formate.format(selectedDate.time)
+                val date = formate.format(selectedDate.time)
+                when (i) {
+                    1 -> popupInflater.startDateTV.text = date
+                    2 -> popupInflater.endDateTV.text = date
+                }
+                Toast.makeText(this, date, Toast.LENGTH_LONG).show()
             },
             currently.get(Calendar.YEAR),
             currently.get(Calendar.MONTH),
             currently.get(Calendar.DAY_OF_MONTH)
         )
         datePicker.show()
-        return date
     }
     fun eraseTrip(position: Int) {
         tripsDB!!.newDao().delete(tripsList[position])
