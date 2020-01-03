@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
     private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
     private var formate =
-        SimpleDateFormat("dd/MM/YYYY", Locale.US).format(System.currentTimeMillis())
+        SimpleDateFormat("DD/MM/YYYY", Locale.getDefault())
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -223,6 +223,7 @@ class MainActivity : AppCompatActivity() {
                 selectedDate.set(Calendar.MONTH, month)
                 selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 val date = formate.format(selectedDate.time)
+
                 when (i) {
                     1 -> popupInflater.startDateTV.text = date
                     2 -> popupInflater.endDateTV.text = date
@@ -235,6 +236,7 @@ class MainActivity : AppCompatActivity() {
         )
         datePicker.show()
     }
+
     fun eraseTrip(position: Int) {
         tripsDB!!.newDao().delete(tripsList[position])
         tripsList.remove(tripsList[position])
