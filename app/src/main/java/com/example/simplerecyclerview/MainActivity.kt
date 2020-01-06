@@ -19,6 +19,7 @@ import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
 import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.new_item.*
 import kotlinx.android.synthetic.main.popup_data.*
 import kotlinx.android.synthetic.main.popup_data.view.*
 import timber.log.Timber
@@ -124,6 +125,10 @@ class MainActivity : AppCompatActivity() {
                 rvAdapter.notifyItemInserted(tripsList.size)
                 dialog.dismiss()
             }
+            if (needsAlarmManager(startTextView.text.toString()))
+                JsonParserService.weatherGetter(citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!)
+            else
+
         }
     }
 
@@ -201,6 +206,20 @@ class MainActivity : AppCompatActivity() {
             return true
         return false
 
+    }
+
+    private fun needsAlarmManager(dateDestination: String): Boolean {
+        val unixTimeDestination = Calendar.getInstance()
+        unixTimeDestination.set(
+            dateDestination.substring(6, 9).toInt(),
+            dateDestination.substring(3, 4).toInt(),
+            dateDestination.substring(0, 1).toInt(),
+            0, 0, 0
+        )
+        val distance = unixTimeDestination.timeInMillis - System.currentTimeMillis()
+        if (distance > 345000)
+            return true
+        return false
     }
 
     private fun bufferer() {
