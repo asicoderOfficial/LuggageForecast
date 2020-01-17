@@ -5,16 +5,20 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.google.gson.JsonObject
+import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
+import java.io.*
 import java.lang.Exception
 import java.net.URL
+import java.util.function.DoubleConsumer
+import kotlin.coroutines.coroutineContext
 
-val API_KEY: String = "4377883cd1f33629c0abd644adf0f399"
+val API_KEY: String = "dd1670ca8d4a22e19aa20b83753f5dad"
 
 class JsonParserService : Service() {
 
@@ -24,10 +28,13 @@ class JsonParserService : Service() {
 
     class WeatherGetter : AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg params: String?): String? {
-            var response: String?
+            var response: String? = null
             try {
+                //response = URL("api.openweathermap.org/data/2.5/forecast/daily?id=524901").readText(Charsets.UTF_8)
+                // https://api.openweathermap.org/data/2.5/forecast?id={${707860}}&units=metric&appid=${dd1670ca8d4a22e19aa20b83753f5dad}
+                // https://api.openweathermap.org/data/2.5/forecast?id=3130360&units=metric&appid=dd1670ca8d4a22e19aa20b83753f5dad
                 response =
-                    URL("api.openweathermap.org/data/2.5/forecast?id={${MainActivity.sCityID.toString()}}&cnt={${MainActivity.tripDurationDays}&appid=${API_KEY}").readText(
+                    URL("https://api.openweathermap.org/data/2.5/forecast?id=${MainActivity.sCityID}&units=metric&appid=${API_KEY}").readText(
                         Charsets.UTF_8
                     )
             } catch (e: Exception) {
@@ -41,14 +48,20 @@ class JsonParserService : Service() {
             super.onPostExecute(result)
             try {
                 val jsonObj = JSONObject(result!!)
-                val jsonObjList = JSONArray(jsonObj.getJSONArray("list"))
-                val main = jsonObj.getJSONObject("main")
-                val sys = jsonObj.getJSONObject("sys")
-                val wind = jsonObj.getJSONObject("wind")
-                val temp = main.getString("temp") + "°C"
-                val tempMin = "Min Temp: " + main.getString("temp_min") + "°C"
-                val tempMax = "Max Temp: " + main.getString("temp_max") + "°C"
-                val humidity = main.getString("humidity")
+                val jsonObjList = jsonObj.getJSONArray("list")
+                val params = arrayListOf<Array<Double>>()
+                for (i in 0 until jsonObjList.length()) {
+                    val tempArray = arrayOf(
+                        jsonObjList.getJSONObject(i).getJSONObject("main").getDouble("feels_like"),
+                        jsonObjList.getJSONObject(i).getJSONObject("main").getDouble("temp_min"),
+                        jsonObjList.getJSONObject(i).getJSONObject("main").getDouble("temp_max"),
+                        jsonObjList.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getDouble(
+                            "id"
+                        )
+                    )
+                    params.add(tempArray)
+                }
+                println("PARAMS=" + params[0][0])
             } catch (e: Exception) {
                 Timber.i("Exception thrown")
             }

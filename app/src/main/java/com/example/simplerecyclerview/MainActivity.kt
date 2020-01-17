@@ -185,6 +185,8 @@ class MainActivity : AppCompatActivity() {
                     ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toString()
+                JsonParserService.WeatherGetter().execute()
+                Toast.makeText(this, sCityID, Toast.LENGTH_LONG).show()
                 rvAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
@@ -273,7 +275,6 @@ class MainActivity : AppCompatActivity() {
                     1 -> popupInflater.startDateTV.text = date
                     2 -> popupInflater.endDateTV.text = date
                 }
-                Toast.makeText(this, date, Toast.LENGTH_LONG).show()
             },
             currently.get(Calendar.YEAR),
             currently.get(Calendar.MONTH),
