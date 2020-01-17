@@ -1,9 +1,8 @@
 package com.example.simplerecyclerview
 
 import android.app.DatePickerDialog
-import android.app.Dialog
 import android.content.DialogInterface
-import android.os.AsyncTask
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -13,20 +12,15 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatViewInflater
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.room.Room
 import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
 import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.new_item.*
-import kotlinx.android.synthetic.main.popup_data.*
 import kotlinx.android.synthetic.main.popup_data.view.*
 import timber.log.Timber
 import java.io.*
 import java.text.SimpleDateFormat
-import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
@@ -36,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private var tripsList: ArrayList<TripsDataClass> = ArrayList()
     private var citiesList = ArrayList<String>()
     private var citiesIdMap = HashMap<String, String>()
+    private var intentJsonParserService: Intent? = null
 
     private lateinit var rvAdapter: SimpleAdapter
 
@@ -54,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         simpleRV.layoutManager = LinearLayoutManager(this)
 
         bufferer()
-
+        intentJsonParserService = Intent(this, JsonParserService::class.java)
         tripsDB = TripsDatabaseClass.getAppDataBase(this)
 
         rvAdapter = SimpleAdapter(tripsList, this, object : RV_Methods {
@@ -108,7 +103,8 @@ class MainActivity : AppCompatActivity() {
                     popUpInflater.nameOfTripEditText.text.toString(),
                     popUpInflater.destinyAutoCTV.text.toString(),
                     popUpInflater.startDateTV.text.toString(),
-                    popUpInflater.endDateTV.text.toString()
+                    popUpInflater.endDateTV.text.toString(),
+                    0
                 )
             )
                 dialog.dismiss()
@@ -131,11 +127,13 @@ class MainActivity : AppCompatActivity() {
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toString()
                 rvAdapter.notifyItemInserted(tripsList.size)
-                JsonParserService.WeatherGetter().execute()
+                startService(intentJsonParserService)
                 dialog.dismiss()
             }
             //JsonParserService.weatherGetter(citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!)
         }
+        Toast.makeText(this, tripsDB!!.newDao().getNumberOfTrips().toString(), Toast.LENGTH_LONG)
+            .show()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -164,7 +162,9 @@ class MainActivity : AppCompatActivity() {
                     popUpInflater.nameOfTripEditText.text.toString(),
                     popUpInflater.destinyAutoCTV.text.toString(),
                     popUpInflater.startDateTV.text.toString(),
-                    popUpInflater.endDateTV.text.toString()
+                    popUpInflater.endDateTV.text.toString(),
+                    1
+
                 )
             )
                 dialog.dismiss()
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
                     ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toString()
-                JsonParserService.WeatherGetter().execute()
+                startService(intentJsonParserService)
                 Toast.makeText(this, sCityID, Toast.LENGTH_LONG).show()
                 rvAdapter.notifyDataSetChanged()
                 dialog.dismiss()
@@ -209,7 +209,8 @@ class MainActivity : AppCompatActivity() {
         name: String,
         destiny: String,
         starting: String,
-        ending: String
+        ending: String,
+        actionSelected: Int
     ): Boolean {
         val dateStartingInMillies = Date(getDestinationTime(starting))
         val dateEndingInMillies = Date(getDestinationTime(ending))
@@ -234,8 +235,19 @@ class MainActivity : AppCompatActivity() {
                 "The trip can not last more than 15 days, because weather forecast is not available.",
                 Toast.LENGTH_LONG
             ).show()
-        } else
+        } else if (actionSelected == 0) {
+            for (i in 0 until tripsList.size) {
+                if (name == tripsList[i].name) {
+                    Toast.makeText(
+                        this,
+                        "You can not have trips with the same name.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return false
+                }
+            }
             return true
+        }
         return false
     }
 

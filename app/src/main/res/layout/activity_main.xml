@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <fragment
+        android:id="@+id/navHostFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:navGraph="@navigation/nav"
+        app:defaultNavHost="true" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/simpleRV"
         android:layout_width="match_parent"
