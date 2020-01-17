@@ -3,6 +3,7 @@ package com.example.simplerecyclerview
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.DialogInterface
+import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -25,6 +26,7 @@ import kotlinx.android.synthetic.main.popup_data.view.*
 import timber.log.Timber
 import java.io.*
 import java.text.SimpleDateFormat
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var rvAdapter: SimpleAdapter
 
     private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
+    private val MILLIES_DAY = 86400000
     private var formate =
         SimpleDateFormat("DD/MM/YYYY", Locale.getDefault())
 
@@ -122,13 +125,16 @@ class MainActivity : AppCompatActivity() {
 
                     tripsDB?.newDao()?.insert(newTrip)
                 }.start()
+                sCityID = citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!
+                tripDurationDays =
+                    ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
+                        popUpInflater.startDateTV.text.toString()
+                    )) / MILLIES_DAY).toString()
                 rvAdapter.notifyItemInserted(tripsList.size)
+                JsonParserService.WeatherGetter().execute()
                 dialog.dismiss()
             }
-            if (needsAlarmManager(startTextView.text.toString()))
-                JsonParserService.weatherGetter(citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!)
-            else
-
+            //JsonParserService.weatherGetter(citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!)
         }
     }
 
@@ -174,10 +180,27 @@ class MainActivity : AppCompatActivity() {
                     tripsList[position] = newTrip
                     tripsDB?.newDao()?.update(newTrip)
                 }.start()
+                sCityID = citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!
+                tripDurationDays =
+                    ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
+                        popUpInflater.startDateTV.text.toString()
+                    )) / MILLIES_DAY).toString()
                 rvAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
         }
+    }
+
+    fun eraseTrip(position: Int) {
+        tripsDB!!.newDao().delete(tripsList[position])
+        tripsList.remove(tripsList[position])
+        rvAdapter.notifyItemRemoved(position)
+        rvAdapter.notifyItemRangeChanged(position, tripsList.size)
+    }
+
+    companion object {
+        var sCityID: String? = null
+        var tripDurationDays: String? = null
     }
 
     private fun textChecker(
@@ -186,8 +209,9 @@ class MainActivity : AppCompatActivity() {
         starting: String,
         ending: String
     ): Boolean {
-        val dateStarting = Date(starting)
-        val dateEnding = Date(ending)
+        val dateStartingInMillies = Date(getDestinationTime(starting))
+        val dateEndingInMillies = Date(getDestinationTime(ending))
+        val diffStartEnd = dateEndingInMillies.time - dateStartingInMillies.time
         if (name == "")
             Toast.makeText(this, "Name of trip can not be empty.", Toast.LENGTH_LONG).show()
         else if (!citiesIdMap.containsKey(destiny))
@@ -200,15 +224,20 @@ class MainActivity : AppCompatActivity() {
                 "Both dates must be in format:\ndd/mm/yyyy",
                 Toast.LENGTH_LONG
             ).show()
-        else if (dateEnding.before(dateStarting))
+        else if (dateEndingInMillies.before(dateStartingInMillies))
             Toast.makeText(this, "Trip can not end before it starts.", Toast.LENGTH_LONG).show()
-        else
+        else if (diffStartEnd > 1296000000) {
+            Toast.makeText(
+                this,
+                "The trip can not last more than 15 days, because weather forecast is not available.",
+                Toast.LENGTH_LONG
+            ).show()
+        } else
             return true
         return false
-
     }
 
-    private fun needsAlarmManager(dateDestination: String): Boolean {
+    private fun getDestinationTime(dateDestination: String): Long {
         val unixTimeDestination = Calendar.getInstance()
         unixTimeDestination.set(
             dateDestination.substring(6, 9).toInt(),
@@ -216,10 +245,7 @@ class MainActivity : AppCompatActivity() {
             dateDestination.substring(0, 1).toInt(),
             0, 0, 0
         )
-        val distance = unixTimeDestination.timeInMillis - System.currentTimeMillis()
-        if (distance > 345000)
-            return true
-        return false
+        return unixTimeDestination.timeInMillis
     }
 
     private fun bufferer() {
@@ -256,12 +282,6 @@ class MainActivity : AppCompatActivity() {
         datePicker.show()
     }
 
-    fun eraseTrip(position: Int) {
-        tripsDB!!.newDao().delete(tripsList[position])
-        tripsList.remove(tripsList[position])
-        rvAdapter.notifyItemRemoved(position)
-        rvAdapter.notifyItemRangeChanged(position, tripsList.size)
-    }
 
     override fun onStart() {
         super.onStart()
