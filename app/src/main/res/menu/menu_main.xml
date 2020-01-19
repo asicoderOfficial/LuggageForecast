@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.simplerecyclerview.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_about"
+        android:icon="@drawable/main_logo"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/action_about_text"
         app:showAsAction="never" />
 </menu>

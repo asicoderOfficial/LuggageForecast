@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [TripsDataClass::class], version = 2)
+@Database(entities = [TripsDataClass::class], version = 2, exportSchema = true)
 abstract class TripsDatabaseClass : RoomDatabase() {
     abstract fun newDao(): TripsDao
 

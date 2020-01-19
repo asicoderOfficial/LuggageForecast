@@ -1,4 +1,4 @@
-package com.example.simplerecyclerview
+package com.example.simplerecyclerview.fragments
 
 
 import android.os.Bundle
@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.simplerecyclerview.R
 
 /**
  * A simple [Fragment] subclass.

@@ -1,86 +1,121 @@
-package com.example.simplerecyclerview
+package com.example.simplerecyclerview.fragments
 
 import android.app.DatePickerDialog
 import android.content.DialogInterface
+import androidx.fragment.app.Fragment
+import com.example.simplerecyclerview.R
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.view.View
+import android.view.*
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.simplerecyclerview.JsonParserService
 import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
-import com.example.simplerecyclerview.fragments.main_recycler.RV_Methods
 import com.example.simplerecyclerview.fragments.main_recycler.MainAdapter
+import com.example.simplerecyclerview.fragments.main_recycler.RV_Methods
 import com.facebook.stetho.Stetho
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.popup_data.view.*
 import timber.log.Timber
-import java.io.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
-class MainActivity : AppCompatActivity() {
-    /*var tripsDB: TripsDatabaseClass? = null
+class MainFragment : Fragment() {
+
+    var tripsDB: TripsDatabaseClass? = null
     private var tripsList: ArrayList<TripsDataClass> = ArrayList()
     private var citiesList = ArrayList<String>()
     private var citiesIdMap = HashMap<String, String>()
     private var intentJsonParserService: Intent? = null
 
     private lateinit var rvAdapter: MainAdapter
-
     private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
     private val MILLIES_DAY = 86400000
     private var formate =
-        SimpleDateFormat("DD/MM/YYYY", Locale.getDefault())*/
+        SimpleDateFormat("DD/MM/YYYY", Locale.getDefault())
 
     @RequiresApi(Build.VERSION_CODES.N)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-/*
+    @Override
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         Timber.plant()
-        Stetho.initializeWithDefaults(this)
-        simpleRV.layoutManager = LinearLayoutManager(this)
-
-        bufferer()
-        intentJsonParserService = Intent(this, JsonParserService::class.java)
-        tripsDB = TripsDatabaseClass.getAppDataBase(this)
-
-        rvAdapter =
-            SimpleAdapter(
-                tripsList,
-                this,
-                object :
-                    RV_Methods {
-                    override fun onItemEditClick(position: Int) {
-                        editTripPopUp(position)
-                    }
-
-                    override fun onItemEraseClick(position: Int) {
-                        eraseTrip(position)
-                    }
-                })
-
-        tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
-
-        simpleRV.adapter = rvAdapter
-        val autoCompleteAdapter =
-            ArrayAdapter(this, android.R.layout.simple_list_item_1, citiesList)
-        addBT.setOnClickListener {
-            addTripPopUp(autoCompleteAdapter)
-        }*/
+        // Inflate the layout for this fragment
+        setHasOptionsMenu(true)
+        return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
-    /*@RequiresApi(Build.VERSION_CODES.N)
-    private fun addTripPopUp(autoCompleteAdapter: ArrayAdapter<String>) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_main, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return NavigationUI.onNavDestinationSelected(
+            item,
+            view!!.findNavController()
+        )
+                || super.onOptionsItemSelected(item)
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        try {
+            Stetho.initializeWithDefaults(context)
+            mainRV.layoutManager = LinearLayoutManager(activity!!.applicationContext)
+            bufferer()
+            intentJsonParserService = Intent(context, JsonParserService::class.java)
+            tripsDB = TripsDatabaseClass.getAppDataBase(activity!!.applicationContext)
+
+            rvAdapter =
+                MainAdapter(
+                    tripsList,
+                    context,
+                    object :
+                        RV_Methods {
+                        override fun onItemEditClick(position: Int, it: View) {
+                            editTripPopUp(position, it)
+                        }
+
+                        override fun onItemEraseClick(position: Int) {
+                            eraseTrip(position)
+                        }
+                    })
+
+            tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
+
+            mainRV.adapter = rvAdapter
+            val autoCompleteAdapter =
+                ArrayAdapter(
+                    activity!!.applicationContext,
+                    android.R.layout.simple_list_item_1,
+                    citiesList
+                )
+            addBT.setOnClickListener {
+                addTripPopUp(autoCompleteAdapter, it)
+            }
+        } catch (e: Exception) {
+            println()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun addTripPopUp(autoCompleteAdapter: ArrayAdapter<String>, it: View) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
         popUpInflater.startDateTV.text = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(
             System.currentTimeMillis()
@@ -97,7 +132,7 @@ class MainActivity : AppCompatActivity() {
         popUpInflater.destinyAutoCTV.threshold = 0
         popUpInflater.destinyAutoCTV.setAdapter(autoCompleteAdapter)
 
-        val popUpBuilder = AlertDialog.Builder(this)
+        val popUpBuilder = AlertDialog.Builder(it.context)
         popUpBuilder.setView(popUpInflater)
         popUpBuilder.setCancelable(false)
         popUpBuilder.setPositiveButton("CREATE") { _: DialogInterface, _: Int -> }
@@ -134,23 +169,24 @@ class MainActivity : AppCompatActivity() {
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toString()
                 rvAdapter.notifyItemInserted(tripsList.size)
-                startService(intentJsonParserService)
+                //startService(intentJsonParserService)
                 dialog.dismiss()
             }
             //JsonParserService.weatherGetter(citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!)
         }
-        Toast.makeText(this, tripsDB!!.newDao().getNumberOfTrips().toString(), Toast.LENGTH_LONG)
+        Toast.makeText(context, tripsDB!!.newDao().getNumberOfTrips().toString(), Toast.LENGTH_LONG)
             .show()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    fun editTripPopUp(position: Int) {
+    fun editTripPopUp(position: Int, it: View) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
         popUpInflater.nameOfTripEditText.setText(tripsList[position].name)
         popUpInflater.destinyAutoCTV.setText(tripsList[position].destinationName)
         popUpInflater.startDateTV.text = (tripsList[position].start)
         popUpInflater.endDateTV.text = (tripsList[position].end)
-        val popUpBuilder = AlertDialog.Builder(this)
+
+        val popUpBuilder = AlertDialog.Builder(it.context)
         popUpBuilder.setView(popUpInflater)
         popUpBuilder.setCancelable(false)
         popUpBuilder.setPositiveButton("SAVE") { _: DialogInterface, _: Int -> }
@@ -192,8 +228,8 @@ class MainActivity : AppCompatActivity() {
                     ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toString()
-                startService(intentJsonParserService)
-                Toast.makeText(this, sCityID, Toast.LENGTH_LONG).show()
+                //startService(intentJsonParserService)
+                Toast.makeText(context, sCityID, Toast.LENGTH_LONG).show()
                 rvAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
@@ -223,22 +259,22 @@ class MainActivity : AppCompatActivity() {
         val dateEndingInMillies = Date(getDestinationTime(ending))
         val diffStartEnd = dateEndingInMillies.time - dateStartingInMillies.time
         if (name == "")
-            Toast.makeText(this, "Name of trip can not be empty.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Name of trip can not be empty.", Toast.LENGTH_LONG).show()
         else if (!citiesIdMap.containsKey(destiny))
-            Toast.makeText(this, "Destination does not exist.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Destination does not exist.", Toast.LENGTH_LONG).show()
         else if (!DATE_PATTERN.matcher(starting).matches()
             || !DATE_PATTERN.matcher(ending).matches()
         )
             Toast.makeText(
-                this,
+                context,
                 "Both dates must be in format:\ndd/mm/yyyy",
                 Toast.LENGTH_LONG
             ).show()
         else if (dateEndingInMillies.before(dateStartingInMillies))
-            Toast.makeText(this, "Trip can not end before it starts.", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Trip can not end before it starts.", Toast.LENGTH_LONG).show()
         else if (diffStartEnd > 1296000000) {
             Toast.makeText(
-                this,
+                context,
                 "The trip can not last more than 15 days, because weather forecast is not available.",
                 Toast.LENGTH_LONG
             ).show()
@@ -246,7 +282,7 @@ class MainActivity : AppCompatActivity() {
             for (i in 0 until tripsList.size) {
                 if (name == tripsList[i].name) {
                     Toast.makeText(
-                        this,
+                        activity,
                         "You can not have trips with the same name.",
                         Toast.LENGTH_LONG
                     ).show()
@@ -270,7 +306,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bufferer() {
-        val bfr = BufferedReader(InputStreamReader(assets.open("city_id.txt")))
+
+        val bfr = BufferedReader(InputStreamReader(activity!!.assets.open("city_id.txt")))
         bfr.forEachLine {
             val pair = it.split(" ")
             citiesIdMap[pair[1]] = pair[0]
@@ -282,7 +319,7 @@ class MainActivity : AppCompatActivity() {
     private fun showDatePicker(popupInflater: View, i: Int) {
         val currently = Calendar.getInstance()
         val datePicker = DatePickerDialog(
-            this,
+            activity!!.applicationContext,
             DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 val selectedDate = Calendar.getInstance()
                 selectedDate.set(Calendar.YEAR, year)
@@ -301,48 +338,4 @@ class MainActivity : AppCompatActivity() {
         )
         datePicker.show()
     }
-
-
-    override fun onStart() {
-        super.onStart()
-        Timber.i("onStart called")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.i("onResume called")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Timber.i("onPause called")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Timber.i("onStop called")
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        Timber.i("onRestart called")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Timber.i("onDestroy called")
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        Timber.i("onSaveInstanceState called")
-    }
-
-    override fun onRestoreInstanceState(
-        savedInstanceState: Bundle?,
-        persistentState: PersistableBundle?
-    ) {
-        super.onRestoreInstanceState(savedInstanceState, persistentState)
-        Timber.i("onRestoreInstanceState called")
-    }*/
 }

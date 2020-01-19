@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.example.simplerecyclerview.fragments.MainFragment
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
@@ -28,10 +29,10 @@ class JsonParserService : IntentService("LuggageCalculationIS") {
     }
 
     private fun jsonParser() {
-        var response: String? = null
+        val response: String?
         try {
             response =
-                URL("https://api.openweathermap.org/data/2.5/forecast?id=${MainActivity.sCityID}&units=metric&appid=${API_KEY}").readText(
+                URL("https://api.openweathermap.org/data/2.5/forecast?id=${MainFragment.sCityID}&units=metric&appid=${API_KEY}").readText(
                     Charsets.UTF_8
                 )
             val jsonObj = JSONObject(response)

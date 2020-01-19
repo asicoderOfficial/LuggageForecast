@@ -16,6 +16,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas".toString())
+            }
+        }
     }
     buildTypes {
         release {
@@ -26,15 +32,15 @@ android {
 }
 
 dependencies {
-    def roomVersion = "2.2.2"
+
     //Stetho
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
 
     // Room
-    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-runtime:2.2.3"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    kapt "androidx.room:room-compiler:$roomVersion"
+    kapt "androidx.room:room-compiler:2.2.3"
     //implementation 'android.arch.persistence.room:runtime:1.1.1'
     //implementation 'android.arch.persistence.room:rxjava2:1.1.1'
 

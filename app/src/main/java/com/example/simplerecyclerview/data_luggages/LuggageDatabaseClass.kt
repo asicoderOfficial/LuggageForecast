@@ -4,12 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.simplerecyclerview.data_trips.TripsDao
-import com.example.simplerecyclerview.data_trips.TripsDataClass
 
-@Database(entities = [LuggageDataClass::class], version = 1)
+@Database(entities = [LuggageDataClass::class], version = 1, exportSchema = true)
 abstract class LuggageDatabaseClass : RoomDatabase() {
-    abstract fun luggagesDao(): TripsDao
+    abstract fun luggagesDao(): LuggageDao
 
     companion object {
         var INSTANCE: LuggageDatabaseClass? = null
