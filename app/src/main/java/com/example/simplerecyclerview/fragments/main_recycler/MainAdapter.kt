@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplerecyclerview.R
 import com.example.simplerecyclerview.data_trips.TripsDataClass
@@ -24,9 +26,9 @@ class MainAdapter(
         holder.destiny.text = tripsList[position].destinationName
         holder.start.text = tripsList[position].start
         holder.end.text = tripsList[position].end
-        holder.itemView.setOnClickListener {
+        /*holder.itemView.setOnClickListener {
             holder.itemView.findNavController().navigate(R.id.luggageFragment)
-        }
+        }*/
         holder.menuCardView.setOnClickListener {
             val popupMenu = PopupMenu(context, holder.menuCardView)
             popupMenu.inflate(R.menu.trip_cardview_menu)
@@ -41,6 +43,9 @@ class MainAdapter(
             popupMenu.show()
         }
 
+        holder.cardView.setOnClickListener {
+            Navigation.findNavController(it).navigate(R.id.luggageFragment)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -59,10 +64,12 @@ class MainAdapter(
     }
 }
 
+
 class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val name = view.nameTextView
     val destiny = view.destinyTextView
     val start = view.startTextView
     val end = view.endTextView
     val menuCardView = view.three_dots_menuIBt
+    val cardView = view.rootView
 }

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">LuggageForecast</string>
     <string name="action_about_text">About</string>
+    <string name="fragment_about">About the app</string>
     <string name="introduceNameOfTheTrip">Name of the trip</string>
     <string name="introduceNameOfDestiny">Name of destiny</string>
     <string name="introduceStartingDate">Starting date</string>

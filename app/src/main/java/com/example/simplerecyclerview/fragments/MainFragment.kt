@@ -97,7 +97,8 @@ class MainFragment : Fragment() {
                         }
                     })
 
-            tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
+            if (tripsList.isEmpty() && tripsDB!!.newDao().getNumberOfTrips() != 0)
+                tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
 
             mainRV.adapter = rvAdapter
             val autoCompleteAdapter =
@@ -112,6 +113,7 @@ class MainFragment : Fragment() {
         } catch (e: Exception) {
             println()
         }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -319,7 +321,7 @@ class MainFragment : Fragment() {
     private fun showDatePicker(popupInflater: View, i: Int) {
         val currently = Calendar.getInstance()
         val datePicker = DatePickerDialog(
-            activity!!.applicationContext,
+            popupInflater.context,
             DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 val selectedDate = Calendar.getInstance()
                 selectedDate.set(Calendar.YEAR, year)

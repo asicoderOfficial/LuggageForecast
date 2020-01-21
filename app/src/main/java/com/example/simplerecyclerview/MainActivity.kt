@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
@@ -45,6 +47,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val navController = this.findNavController(R.id.navHostFragment)
+        NavigationUI.setupActionBarWithNavController(this, navController)
+
 /*
         Timber.plant()
         Stetho.initializeWithDefaults(this)
@@ -77,6 +82,11 @@ class MainActivity : AppCompatActivity() {
         addBT.setOnClickListener {
             addTripPopUp(autoCompleteAdapter)
         }*/
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = this.findNavController(R.id.navHostFragment)
+        return navController.navigateUp()
     }
 
     /*@RequiresApi(Build.VERSION_CODES.N)
