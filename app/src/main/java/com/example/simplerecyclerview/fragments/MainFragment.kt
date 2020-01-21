@@ -16,6 +16,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecyclerview.JsonParserService
+import com.example.simplerecyclerview.KnapsackLF
 import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
 import com.example.simplerecyclerview.fragments.main_recycler.MainAdapter
@@ -78,7 +79,8 @@ class MainFragment : Fragment() {
         try {
             Stetho.initializeWithDefaults(context)
             mainRV.layoutManager = LinearLayoutManager(activity!!.applicationContext)
-            bufferer()
+            if (citiesList.isEmpty())
+                bufferer()
             intentJsonParserService = Intent(context, JsonParserService::class.java)
             tripsDB = TripsDatabaseClass.getAppDataBase(activity!!.applicationContext)
 
@@ -171,13 +173,10 @@ class MainFragment : Fragment() {
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toString()
                 rvAdapter.notifyItemInserted(tripsList.size)
-                //startService(intentJsonParserService)
+                //KnapsackLF.solver(activity!!.startService(intentJsonParserService))
                 dialog.dismiss()
             }
-            //JsonParserService.weatherGetter(citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!)
         }
-        Toast.makeText(context, tripsDB!!.newDao().getNumberOfTrips().toString(), Toast.LENGTH_LONG)
-            .show()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -209,7 +208,6 @@ class MainFragment : Fragment() {
                     popUpInflater.startDateTV.text.toString(),
                     popUpInflater.endDateTV.text.toString(),
                     1
-
                 )
             )
                 dialog.dismiss()
@@ -230,8 +228,7 @@ class MainFragment : Fragment() {
                     ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toString()
-                //startService(intentJsonParserService)
-                Toast.makeText(context, sCityID, Toast.LENGTH_LONG).show()
+                activity!!.startService(intentJsonParserService)
                 rvAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }

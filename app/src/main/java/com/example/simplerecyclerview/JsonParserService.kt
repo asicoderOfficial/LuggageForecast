@@ -28,8 +28,9 @@ class JsonParserService : IntentService("LuggageCalculationIS") {
         jsonParser()
     }
 
-    private fun jsonParser() {
+    private fun jsonParser(): ArrayList<Array<Double>> {
         val response: String?
+        val params = arrayListOf<Array<Double>>()
         try {
             response =
                 URL("https://api.openweathermap.org/data/2.5/forecast?id=${MainFragment.sCityID}&units=metric&appid=${API_KEY}").readText(
@@ -37,7 +38,6 @@ class JsonParserService : IntentService("LuggageCalculationIS") {
                 )
             val jsonObj = JSONObject(response)
             val jsonObjList = jsonObj.getJSONArray("list")
-            val params = arrayListOf<Array<Double>>()
             for (i in 0 until jsonObjList.length()) {
                 val tempArray = arrayOf(
                     jsonObjList.getJSONObject(i).getJSONObject("main").getDouble("feels_like"),
@@ -52,5 +52,6 @@ class JsonParserService : IntentService("LuggageCalculationIS") {
         } catch (e: Exception) {
             Timber.i("Exception thrown during json parsing.")
         }
+        return params
     }
 }
