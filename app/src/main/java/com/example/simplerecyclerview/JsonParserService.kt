@@ -28,7 +28,7 @@ class JsonParserService : IntentService("LuggageCalculationIS") {
         jsonParser()
     }
 
-    private fun jsonParser(): ArrayList<Array<Double>> {
+    private fun jsonParser() {
         val response: String?
         val params = arrayListOf<Array<Double>>()
         try {
@@ -52,6 +52,6 @@ class JsonParserService : IntentService("LuggageCalculationIS") {
         } catch (e: Exception) {
             Timber.i("Exception thrown during json parsing.")
         }
-        return params
+        KnapsackLF.solver(params)
     }
 }

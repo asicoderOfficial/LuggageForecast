@@ -42,5 +42,7 @@ class LuggageDataClass(
     @ColumnInfo(name = "Hat")
     val hat: Int,
     @ColumnInfo(name = "Gloves")
-    val gloves: Int
+    val gloves: Int,
+    @ColumnInfo(name = "Scarf")
+    val scarf: Int
 )

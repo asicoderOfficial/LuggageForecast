@@ -40,6 +40,7 @@ class MainFragment : Fragment() {
     private var citiesList = ArrayList<String>()
     private var citiesIdMap = HashMap<String, String>()
     private var intentJsonParserService: Intent? = null
+    private lateinit var autoCompleteAdapter: ArrayAdapter<String>
 
     private lateinit var rvAdapter: MainAdapter
     private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
@@ -48,7 +49,6 @@ class MainFragment : Fragment() {
         SimpleDateFormat("DD/MM/YYYY", Locale.getDefault())
 
     @RequiresApi(Build.VERSION_CODES.N)
-    @Override
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -103,9 +103,9 @@ class MainFragment : Fragment() {
                 tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
 
             mainRV.adapter = rvAdapter
-            val autoCompleteAdapter =
+            autoCompleteAdapter =
                 ArrayAdapter(
-                    activity!!.applicationContext,
+                    view.context,
                     android.R.layout.simple_list_item_1,
                     citiesList
                 )
@@ -171,9 +171,10 @@ class MainFragment : Fragment() {
                 tripDurationDays =
                     ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
                         popUpInflater.startDateTV.text.toString()
-                    )) / MILLIES_DAY).toString()
+                    )) / MILLIES_DAY).toInt()
                 rvAdapter.notifyItemInserted(tripsList.size)
-                //KnapsackLF.solver(activity!!.startService(intentJsonParserService))
+                cardViewPosition = tripsList.size
+                activity!!.startService(intentJsonParserService)
                 dialog.dismiss()
             }
         }
@@ -200,18 +201,18 @@ class MainFragment : Fragment() {
         popUpInflater.endDateTV.setOnClickListener {
             showDatePicker(popUpInflater, 2)
         }
+        popUpInflater.destinyAutoCTV.threshold = 0
+        popUpInflater.destinyAutoCTV.setAdapter(autoCompleteAdapter)
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            if (!textChecker(
+            if (textChecker(
                     popUpInflater.nameOfTripEditText.text.toString(),
                     popUpInflater.destinyAutoCTV.text.toString(),
                     popUpInflater.startDateTV.text.toString(),
                     popUpInflater.endDateTV.text.toString(),
                     1
                 )
-            )
-                dialog.dismiss()
-            else {
+            ) {
                 Thread {
                     val newTrip = TripsDataClass(
                         popUpInflater.nameOfTripEditText.text.toString(),
@@ -227,11 +228,13 @@ class MainFragment : Fragment() {
                 tripDurationDays =
                     ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
                         popUpInflater.startDateTV.text.toString()
-                    )) / MILLIES_DAY).toString()
+                    )) / MILLIES_DAY).toInt()
+                cardViewPosition = position
                 activity!!.startService(intentJsonParserService)
                 rvAdapter.notifyDataSetChanged()
-                dialog.dismiss()
+
             }
+            dialog.dismiss()
         }
     }
 
@@ -244,7 +247,8 @@ class MainFragment : Fragment() {
 
     companion object {
         var sCityID: String? = null
-        var tripDurationDays: String? = null
+        var tripDurationDays: Int? = null
+        var cardViewPosition: Int? = null
     }
 
     private fun textChecker(
@@ -271,7 +275,7 @@ class MainFragment : Fragment() {
             ).show()
         else if (dateEndingInMillies.before(dateStartingInMillies))
             Toast.makeText(context, "Trip can not end before it starts.", Toast.LENGTH_LONG).show()
-        else if (diffStartEnd > 1296000000) {
+        else if (diffStartEnd > 345600000) {
             Toast.makeText(
                 context,
                 "The trip can not last more than 15 days, because weather forecast is not available.",
@@ -288,6 +292,7 @@ class MainFragment : Fragment() {
                     return false
                 }
             }
+        } else {
             return true
         }
         return false
