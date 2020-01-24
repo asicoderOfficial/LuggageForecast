@@ -40,7 +40,7 @@ class JsonParserService : IntentService("LuggageCalculationIS") {
             val jsonObjList = jsonObj.getJSONArray("list")
             for (i in 0 until jsonObjList.length()) {
                 val tempArray = arrayOf(
-                    jsonObjList.getJSONObject(i).getJSONObject("main").getDouble("feels_like"),
+                    jsonObjList.getJSONObject(i).getJSONObject("main").getDouble("temp"),
                     jsonObjList.getJSONObject(i).getJSONObject("main").getDouble("temp_min"),
                     jsonObjList.getJSONObject(i).getJSONObject("main").getDouble("temp_max"),
                     jsonObjList.getJSONObject(i).getJSONArray("weather").getJSONObject(0).getDouble(

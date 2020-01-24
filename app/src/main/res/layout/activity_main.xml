@@ -16,6 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/nav" />
+        app:navGraph="@navigation/nav"
+        android:orientation="vertical" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

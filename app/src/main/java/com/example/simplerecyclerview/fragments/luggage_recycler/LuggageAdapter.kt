@@ -1,3 +1,0 @@
-package com.example.simplerecyclerview.fragments.luggage_recycler
-
-class LuggageAdapter

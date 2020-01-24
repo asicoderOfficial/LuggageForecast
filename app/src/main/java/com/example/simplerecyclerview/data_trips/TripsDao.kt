@@ -19,4 +19,7 @@ interface TripsDao {
     @Query("SELECT * FROM Trips ORDER BY Start DESC")
     fun getAllTrips(): List<TripsDataClass>
 
+    @Query("DELETE FROM Trips")
+    fun deleteAllTrips()
+
 }

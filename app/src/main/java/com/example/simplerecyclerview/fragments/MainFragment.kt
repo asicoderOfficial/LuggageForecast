@@ -17,6 +17,8 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecyclerview.JsonParserService
 import com.example.simplerecyclerview.KnapsackLF
+import com.example.simplerecyclerview.data_luggages.LuggageDataClass
+import com.example.simplerecyclerview.data_luggages.LuggageDatabaseClass
 import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
 import com.example.simplerecyclerview.fragments.main_recycler.MainAdapter
@@ -35,8 +37,8 @@ import kotlin.collections.ArrayList
 
 class MainFragment : Fragment() {
 
-    var tripsDB: TripsDatabaseClass? = null
-    private var tripsList: ArrayList<TripsDataClass> = ArrayList()
+    private var tripsDB: TripsDatabaseClass? = null
+    var tripsList: ArrayList<TripsDataClass> = ArrayList()
     private var citiesList = ArrayList<String>()
     private var citiesIdMap = HashMap<String, String>()
     private var intentJsonParserService: Intent? = null
@@ -47,6 +49,14 @@ class MainFragment : Fragment() {
     private val MILLIES_DAY = 86400000
     private var formate =
         SimpleDateFormat("DD/MM/YYYY", Locale.getDefault())
+
+    companion object {
+        var sCityID: String? = null
+        var tripDurationDays: Int? = null
+        var cardViewPosition: Int? = null
+        var luggagesList: ArrayList<LuggageDataClass> = ArrayList()
+        var luggageDB: LuggageDatabaseClass? = null
+    }
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
@@ -82,7 +92,9 @@ class MainFragment : Fragment() {
             if (citiesList.isEmpty())
                 bufferer()
             intentJsonParserService = Intent(context, JsonParserService::class.java)
+
             tripsDB = TripsDatabaseClass.getAppDataBase(activity!!.applicationContext)
+            luggageDB = LuggageDatabaseClass.getAppDataBase(activity!!.applicationContext)
 
             rvAdapter =
                 MainAdapter(
@@ -99,8 +111,13 @@ class MainFragment : Fragment() {
                         }
                     })
 
+            //luggageDB!!.luggagesDao().deleteAllLuggages()
+            //tripsDB!!.newDao().deleteAllTrips()
+
             if (tripsList.isEmpty() && tripsDB!!.newDao().getNumberOfTrips() != 0)
                 tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
+            if (luggageDB!!.luggagesDao().getNumberOfLuggages() != 0)
+                luggagesList.addAll(luggageDB!!.luggagesDao().getAllLugages() as ArrayList<LuggageDataClass>)
 
             mainRV.adapter = rvAdapter
             autoCompleteAdapter =
@@ -115,7 +132,6 @@ class MainFragment : Fragment() {
         } catch (e: Exception) {
             println()
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -173,7 +189,8 @@ class MainFragment : Fragment() {
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toInt()
                 rvAdapter.notifyItemInserted(tripsList.size)
-                cardViewPosition = tripsList.size
+                cardViewPosition = tripsList.size - 1
+                KnapsackLF.selectedAction = 0
                 activity!!.startService(intentJsonParserService)
                 dialog.dismiss()
             }
@@ -228,8 +245,15 @@ class MainFragment : Fragment() {
                 tripDurationDays =
                     ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
                         popUpInflater.startDateTV.text.toString()
-                    )) / MILLIES_DAY).toInt()
+                    )) / MILLIES_DAY).toInt() + 1
+
+                Toast.makeText(
+                    activity,
+                    tripDurationDays.toString() + " tduration",
+                    Toast.LENGTH_LONG
+                ).show()
                 cardViewPosition = position
+                KnapsackLF.selectedAction = 1
                 activity!!.startService(intentJsonParserService)
                 rvAdapter.notifyDataSetChanged()
 
@@ -241,14 +265,11 @@ class MainFragment : Fragment() {
     fun eraseTrip(position: Int) {
         tripsDB!!.newDao().delete(tripsList[position])
         tripsList.remove(tripsList[position])
+        luggageDB!!.luggagesDao().delete(luggagesList[position])
+        luggagesList.removeAt(position)
         rvAdapter.notifyItemRemoved(position)
         rvAdapter.notifyItemRangeChanged(position, tripsList.size)
-    }
-
-    companion object {
-        var sCityID: String? = null
-        var tripDurationDays: Int? = null
-        var cardViewPosition: Int? = null
+        Toast.makeText(activity, "luggageList size " + luggagesList.size, Toast.LENGTH_LONG).show()
     }
 
     private fun textChecker(
@@ -278,7 +299,7 @@ class MainFragment : Fragment() {
         else if (diffStartEnd > 345600000) {
             Toast.makeText(
                 context,
-                "The trip can not last more than 15 days, because weather forecast is not available.",
+                "The trip can not last more than 5 days, because weather forecast is not available at larger intervals of time.",
                 Toast.LENGTH_LONG
             ).show()
         } else if (actionSelected == 0) {
@@ -292,6 +313,7 @@ class MainFragment : Fragment() {
                     return false
                 }
             }
+            return true
         } else {
             return true
         }
@@ -299,14 +321,16 @@ class MainFragment : Fragment() {
     }
 
     private fun getDestinationTime(dateDestination: String): Long {
+
         val unixTimeDestination = Calendar.getInstance()
         unixTimeDestination.set(
-            dateDestination.substring(6, 9).toInt(),
-            dateDestination.substring(3, 4).toInt(),
-            dateDestination.substring(0, 1).toInt(),
+            dateDestination.substring(6, 10).toInt(),
+            dateDestination.substring(3, 5).toInt(),
+            dateDestination.substring(0, 2).toInt(),
             0, 0, 0
         )
-        return unixTimeDestination.timeInMillis
+        val inMillies = unixTimeDestination.timeInMillis
+        return inMillies
     }
 
     private fun bufferer() {

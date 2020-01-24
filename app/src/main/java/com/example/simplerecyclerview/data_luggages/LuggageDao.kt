@@ -1,7 +1,6 @@
 package com.example.simplerecyclerview.data_luggages
 
 import androidx.room.*
-import com.example.simplerecyclerview.data_trips.TripsDataClass
 
 @Dao
 interface LuggageDao {
@@ -13,4 +12,14 @@ interface LuggageDao {
 
     @Update
     fun update(newLuggagesData: LuggageDataClass)
+
+    @Query("SELECT COUNT(`Index`) FROM Luggages")
+    fun getNumberOfLuggages(): Int
+
+    @Query("SELECT * FROM Luggages")
+    fun getAllLugages(): List<LuggageDataClass>
+
+    @Query("DELETE FROM Luggages")
+    fun deleteAllLuggages()
+
 }

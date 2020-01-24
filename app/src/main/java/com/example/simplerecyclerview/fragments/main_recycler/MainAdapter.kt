@@ -11,6 +11,10 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplerecyclerview.R
 import com.example.simplerecyclerview.data_trips.TripsDataClass
+import com.example.simplerecyclerview.fragments.LuggageFragment
+import com.example.simplerecyclerview.fragments.MainFragment
+import com.example.simplerecyclerview.fragments.WeatherFragment
+import kotlinx.android.synthetic.main.fragment_luggage.view.*
 import kotlinx.android.synthetic.main.new_item.view.*
 import timber.log.Timber
 
@@ -19,9 +23,9 @@ class MainAdapter(
     private val context: Context?,
     private val rvMethods: RV_Methods
 ) :
-    RecyclerView.Adapter<ViewHolder>() {
+    RecyclerView.Adapter<MainViewHolder>() {
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         holder.name.text = tripsList[position].name
         holder.destiny.text = tripsList[position].destinationName
         holder.start.text = tripsList[position].start
@@ -44,13 +48,13 @@ class MainAdapter(
         }
 
         holder.cardView.setOnClickListener {
-            Navigation.findNavController(it).navigate(R.id.luggageFragment)
+            Navigation.findNavController(it).navigate(R.id.action_mainFragment_to_luggageFragment)
+            LuggageFragment.cardViewPressedPos = position
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        Timber.i("onCreateViewHolder called. ViewTipe: $viewType")
-        return ViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
+        return MainViewHolder(
             LayoutInflater.from(context).inflate(
                 R.layout.new_item,
                 parent,
@@ -65,7 +69,7 @@ class MainAdapter(
 }
 
 
-class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val name = view.nameTextView
     val destiny = view.destinyTextView
     val start = view.startTextView

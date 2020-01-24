@@ -8,41 +8,43 @@ import androidx.room.PrimaryKey
 class LuggageDataClass(
     @PrimaryKey
     @ColumnInfo(name = "Index")
-    val nameLuggage: String,
+    val cardViewPos: Int,
 
     //////// UPPPER BODY ////////////////
     @ColumnInfo(name = "T-Shirts")
-    val t_shirts: Int,
+    val t_shirts: Int?,
     @ColumnInfo(name = "Jacket")
-    val jacket: Int,
+    val jacket: Int?,
     @ColumnInfo(name = "Coat")
-    val coat: Int,
+    val coat: Int?,
+    @ColumnInfo(name = "Long-sleeved T-shirts")
+    val long_sleevedT_shirts: Int?,
 
     //////// LOWER BODY ////////////////
     @ColumnInfo(name = "Shorts")
-    val shorts: Int,
+    val shorts: Int?,
     @ColumnInfo(name = "Trousers")
-    val trousers: Int,
+    val trousers: Int?,
     @ColumnInfo(name = "Shoes")
-    val shoes: Int,
+    val shoes: Int?,
 
     ///////// UNDERCLOTHES /////////////
     @ColumnInfo(name = "Underpants")
-    val underpants: Int,
+    val underpants: Int?,
     @ColumnInfo(name = "Socks")
-    val socks: Int,
+    val socks: Int?,
 
     ///////// RAINY ///////////////////
     @ColumnInfo(name = "Umbrella")
-    val umbrella: Int,
+    val umbrella: Int?,
     @ColumnInfo(name = "Raincoat")
-    val raincoat: Int,
+    val raincoat: Int?,
 
     ///////// COLD ////////////////////
     @ColumnInfo(name = "Hat")
-    val hat: Int,
+    val hat: Int?,
     @ColumnInfo(name = "Gloves")
-    val gloves: Int,
+    val gloves: Int?,
     @ColumnInfo(name = "Scarf")
-    val scarf: Int
+    val scarf: Int?
 )

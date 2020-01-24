@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [LuggageDataClass::class], version = 1, exportSchema = true)
+@Database(entities = [LuggageDataClass::class], version = 2, exportSchema = true)
 abstract class LuggageDatabaseClass : RoomDatabase() {
     abstract fun luggagesDao(): LuggageDao
 
