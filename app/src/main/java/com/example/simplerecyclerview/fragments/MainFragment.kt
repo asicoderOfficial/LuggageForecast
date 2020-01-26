@@ -111,8 +111,9 @@ class MainFragment : Fragment() {
                         }
                     })
 
-            //luggageDB!!.luggagesDao().deleteAllLuggages()
-            //tripsDB!!.newDao().deleteAllTrips()
+            /*luggageDB!!.luggagesDao().deleteAllLuggages()
+            tripsDB!!.newDao().deleteAllTrips()t.clear()
+            tripsList.clear()*/
 
             if (tripsList.isEmpty() && tripsDB!!.newDao().getNumberOfTrips() != 0)
                 tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
@@ -270,6 +271,7 @@ class MainFragment : Fragment() {
         rvAdapter.notifyItemRemoved(position)
         rvAdapter.notifyItemRangeChanged(position, tripsList.size)
         Toast.makeText(activity, "luggageList size " + luggagesList.size, Toast.LENGTH_LONG).show()
+        Toast.makeText(activity, "Position: $position", Toast.LENGTH_LONG).show()
     }
 
     private fun textChecker(
