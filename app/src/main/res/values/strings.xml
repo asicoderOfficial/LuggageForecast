@@ -17,5 +17,6 @@
     <string name="threedotsmenu">ThreeDotsMenu</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="main_text_about_fragment">Hi!\nMy name is Asier Serrano, a sophomore at Polythecnic University of Valencia, Spain. I am the developer of this simple mobile app. I hope it has helped you to make your luggage for some trip!\nIf you want to know more about me, you can visit my webpage at https://asicoderofficial.github.io/Asicoder.github.io/ or send me an e-mail to asicoderofficial@gmail.com\nGreat feedback in order to improve is welcome! :)</string>
+    <string name="webpage_link"><a href="https://asicoderofficial.github.io/Asicoder.github.io/">HERE</a></string>
 </resources>

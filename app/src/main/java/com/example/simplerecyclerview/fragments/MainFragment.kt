@@ -1,6 +1,8 @@
 package com.example.simplerecyclerview.fragments
 
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.DialogInterface
 import androidx.fragment.app.Fragment
 import com.example.simplerecyclerview.R
@@ -43,12 +45,13 @@ class MainFragment : Fragment() {
     private var citiesIdMap = HashMap<String, String>()
     private var intentJsonParserService: Intent? = null
     private lateinit var autoCompleteAdapter: ArrayAdapter<String>
+    private lateinit var alarmManager: AlarmManager
 
     private lateinit var rvAdapter: MainAdapter
     private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
     private val MILLIES_DAY = 86400000
     private var formate =
-        SimpleDateFormat("DD/MM/YYYY", Locale.getDefault())
+        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
     companion object {
         var sCityID: String? = null
@@ -56,6 +59,7 @@ class MainFragment : Fragment() {
         var cardViewPosition: Int? = null
         var luggagesList: ArrayList<LuggageDataClass> = ArrayList()
         var luggageDB: LuggageDatabaseClass? = null
+
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -86,13 +90,12 @@ class MainFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        try {
             Stetho.initializeWithDefaults(context)
             mainRV.layoutManager = LinearLayoutManager(activity!!.applicationContext)
             if (citiesList.isEmpty())
                 bufferer()
             intentJsonParserService = Intent(context, JsonParserService::class.java)
-
+        alarmManager = activity!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             tripsDB = TripsDatabaseClass.getAppDataBase(activity!!.applicationContext)
             luggageDB = LuggageDatabaseClass.getAppDataBase(activity!!.applicationContext)
 
@@ -130,9 +133,6 @@ class MainFragment : Fragment() {
             addBT.setOnClickListener {
                 addTripPopUp(autoCompleteAdapter, it)
             }
-        } catch (e: Exception) {
-            println()
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -247,12 +247,6 @@ class MainFragment : Fragment() {
                     ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toInt() + 1
-
-                Toast.makeText(
-                    activity,
-                    tripDurationDays.toString() + " tduration",
-                    Toast.LENGTH_LONG
-                ).show()
                 cardViewPosition = position
                 KnapsackLF.selectedAction = 1
                 activity!!.startService(intentJsonParserService)
@@ -270,8 +264,6 @@ class MainFragment : Fragment() {
         luggagesList.removeAt(position)
         rvAdapter.notifyItemRemoved(position)
         rvAdapter.notifyItemRangeChanged(position, tripsList.size)
-        Toast.makeText(activity, "luggageList size " + luggagesList.size, Toast.LENGTH_LONG).show()
-        Toast.makeText(activity, "Position: $position", Toast.LENGTH_LONG).show()
     }
 
     private fun textChecker(
@@ -288,14 +280,6 @@ class MainFragment : Fragment() {
             Toast.makeText(context, "Name of trip can not be empty.", Toast.LENGTH_LONG).show()
         else if (!citiesIdMap.containsKey(destiny))
             Toast.makeText(context, "Destination does not exist.", Toast.LENGTH_LONG).show()
-        else if (!DATE_PATTERN.matcher(starting).matches()
-            || !DATE_PATTERN.matcher(ending).matches()
-        )
-            Toast.makeText(
-                context,
-                "Both dates must be in format:\ndd/mm/yyyy",
-                Toast.LENGTH_LONG
-            ).show()
         else if (dateEndingInMillies.before(dateStartingInMillies))
             Toast.makeText(context, "Trip can not end before it starts.", Toast.LENGTH_LONG).show()
         else if (diffStartEnd > 345600000) {

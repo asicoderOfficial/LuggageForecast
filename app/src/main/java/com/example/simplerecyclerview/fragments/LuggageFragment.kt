@@ -57,6 +57,6 @@ class LuggageFragment : Fragment() {
         luggageRV.layoutManager = LinearLayoutManager(activity!!.applicationContext)
         rvAdapter = LuggageAdapter(luggagesList, context)
         luggageRV.adapter = rvAdapter
-        Toast.makeText(context, luggagesList.size.toString(), Toast.LENGTH_LONG).show()
     }
+
 }
