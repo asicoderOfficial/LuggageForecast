@@ -19,6 +19,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecyclerview.JsonParserService
 import com.example.simplerecyclerview.KnapsackLF
+import com.example.simplerecyclerview.MainActivity
 import com.example.simplerecyclerview.data_luggages.LuggageDataClass
 import com.example.simplerecyclerview.data_luggages.LuggageDatabaseClass
 import com.example.simplerecyclerview.data_trips.TripsDataClass
@@ -110,7 +111,7 @@ class MainFragment : Fragment() {
                         }
 
                         override fun onItemEraseClick(position: Int) {
-                            eraseTrip(position)
+                            showDeleteDialog(position)
                         }
                     })
 
@@ -133,6 +134,25 @@ class MainFragment : Fragment() {
             addBT.setOnClickListener {
                 addTripPopUp(autoCompleteAdapter, it)
             }
+    }
+
+    private fun showDeleteDialog(position: Int) {
+        val popupInflater = layoutInflater.inflate(R.layout.popup_erase, null, false)
+        val popUpBuilder = AlertDialog.Builder(view!!.context)
+        popUpBuilder.setView(popupInflater)
+        popUpBuilder.setCancelable(false)
+        popUpBuilder.setPositiveButton("YES") { _: DialogInterface, _: Int -> }
+        val dialog: AlertDialog =
+            popUpBuilder.setNegativeButton("NO") { _: DialogInterface, _: Int -> }.create()
+        dialog.show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            eraseTrip(position)
+            dialog.dismiss()
+        }
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+            dialog.dismiss()
+        }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.N)

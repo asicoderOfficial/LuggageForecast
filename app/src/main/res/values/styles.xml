@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimaryLightMode</item>
         <item name="colorPrimaryDark">@color/colorPrimaryLightMode_Dark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/font_dark</item>
     </style>
 
     <style name="AppThemeDark" parent="Theme.AppCompat.DayNight.DarkActionBar">

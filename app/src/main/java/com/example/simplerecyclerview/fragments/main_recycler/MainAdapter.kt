@@ -33,6 +33,7 @@ class MainAdapter(
         /*holder.itemView.setOnClickListener {
             holder.itemView.findNavController().navigate(R.id.luggageFragment)
         }*/
+
         holder.menuCardView.setOnClickListener {
             val popupMenu = PopupMenu(context, holder.menuCardView)
             popupMenu.inflate(R.menu.trip_cardview_menu)
