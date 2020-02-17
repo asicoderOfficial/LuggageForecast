@@ -152,7 +152,6 @@ class MainFragment : Fragment() {
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
             dialog.dismiss()
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -190,7 +189,7 @@ class MainFragment : Fragment() {
                     0
                 )
             )
-                dialog.dismiss()
+
             else {
                 Thread {
                     val newTrip = TripsDataClass(
@@ -271,9 +270,8 @@ class MainFragment : Fragment() {
                 KnapsackLF.selectedAction = 1
                 activity!!.startService(intentJsonParserService)
                 rvAdapter.notifyDataSetChanged()
-
+                dialog.dismiss()
             }
-            dialog.dismiss()
         }
     }
 

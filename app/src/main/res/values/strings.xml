@@ -22,4 +22,8 @@
     <string name="weatherimage">weatherImage</string>
     <string name="areyousure">Do you want to delete this trip?</string>
     <string name="clicking_yes_will_erase_the_trip_forever">Clicking YES will erase the trip forever.</string>
+    <string name="end_of_trip">End of trip: </string>
+    <string name="start_of_trip">Start of trip: </string>
+    <string name="destiny_text">Destiny: </string>
+    <string name="name_of_trip">Name of trip: </string>
 </resources>

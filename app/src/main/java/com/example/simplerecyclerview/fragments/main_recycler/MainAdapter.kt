@@ -14,6 +14,7 @@ import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.fragments.LuggageFragment
 import com.example.simplerecyclerview.fragments.MainFragment
 import com.example.simplerecyclerview.fragments.WeatherFragment
+import com.example.simplerecyclerview.fragments.luggage_recycler.LuggageAdapter
 import kotlinx.android.synthetic.main.fragment_luggage.view.*
 import kotlinx.android.synthetic.main.new_item.view.*
 import timber.log.Timber
@@ -26,29 +27,24 @@ class MainAdapter(
     RecyclerView.Adapter<MainViewHolder>() {
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
-        holder.name.text = tripsList[position].name
-        holder.destiny.text = tripsList[position].destinationName
-        holder.start.text = tripsList[position].start
-        holder.end.text = tripsList[position].end
+        holder.name.append(" " + tripsList[position].name)
+        holder.destiny.append(" " + tripsList[position].destinationName)
+        holder.start.append(" " + tripsList[position].start)
+        holder.end.append(" " + tripsList[position].end)
         /*holder.itemView.setOnClickListener {
             holder.itemView.findNavController().navigate(R.id.luggageFragment)
         }*/
 
-        holder.menuCardView.setOnClickListener {
-            val popupMenu = PopupMenu(context, holder.menuCardView)
-            popupMenu.inflate(R.menu.trip_cardview_menu)
-            popupMenu.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.eraseTrip -> rvMethods.onItemEraseClick(position)
+        holder.eraseTripIBT.setOnClickListener {
+            rvMethods.onItemEraseClick(position)
+        }
 
-                    R.id.editTrip -> rvMethods.onItemEditClick(position, holder.itemView)
-                }
-                true
-            }
-            popupMenu.show()
+        holder.editTripIBT.setOnClickListener {
+            rvMethods.onItemEditClick(position, it)
         }
 
         holder.cardView.setOnClickListener {
+            LuggageFragment.titleActionBar = holder.name.text as String
             Navigation.findNavController(it).navigate(R.id.action_mainFragment_to_luggageFragment)
             LuggageFragment.cardViewPressedPos = position
         }
@@ -75,6 +71,7 @@ class MainViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     val destiny = view.destinyTextView
     val start = view.startTextView
     val end = view.endTextView
-    val menuCardView = view.three_dots_menuIBt
+    val editTripIBT = view.editTripIBT
+    val eraseTripIBT = view.eraseTripBT
     val cardView = view.rootView
 }
