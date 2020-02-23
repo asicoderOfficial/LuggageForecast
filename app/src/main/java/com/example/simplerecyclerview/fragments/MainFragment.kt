@@ -4,8 +4,6 @@ import android.app.AlarmManager
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.DialogInterface
-import androidx.fragment.app.Fragment
-import com.example.simplerecyclerview.R
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -14,12 +12,13 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecyclerview.JsonParserService
 import com.example.simplerecyclerview.KnapsackLF
-import com.example.simplerecyclerview.MainActivity
+import com.example.simplerecyclerview.R
 import com.example.simplerecyclerview.data_luggages.LuggageDataClass
 import com.example.simplerecyclerview.data_luggages.LuggageDatabaseClass
 import com.example.simplerecyclerview.data_trips.TripsDataClass
@@ -32,10 +31,8 @@ import kotlinx.android.synthetic.main.popup_data.view.*
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 
 class MainFragment : Fragment() {
@@ -43,13 +40,11 @@ class MainFragment : Fragment() {
     private var tripsDB: TripsDatabaseClass? = null
     var tripsList: ArrayList<TripsDataClass> = ArrayList()
     private var citiesList = ArrayList<String>()
-    private var citiesIdMap = HashMap<String, String>()
     private var intentJsonParserService: Intent? = null
     private lateinit var autoCompleteAdapter: ArrayAdapter<String>
     private lateinit var alarmManager: AlarmManager
 
     private lateinit var rvAdapter: MainAdapter
-    private val DATE_PATTERN: Pattern = Pattern.compile("\\d{2}/\\d{2}/\\d{4}")
     private val MILLIES_DAY = 86400000
     private var formate =
         SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -60,7 +55,7 @@ class MainFragment : Fragment() {
         var cardViewPosition: Int? = null
         var luggagesList: ArrayList<LuggageDataClass> = ArrayList()
         var luggageDB: LuggageDatabaseClass? = null
-
+        var citiesIdMap = HashMap<String, String>()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -85,7 +80,6 @@ class MainFragment : Fragment() {
             view!!.findNavController()
         )
                 || super.onOptionsItemSelected(item)
-
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -275,7 +269,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    fun eraseTrip(position: Int) {
+    private fun eraseTrip(position: Int) {
         tripsDB!!.newDao().delete(tripsList[position])
         tripsList.remove(tripsList[position])
         luggageDB!!.luggagesDao().delete(luggagesList[position])

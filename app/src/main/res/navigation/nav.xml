@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_mainFragment_to_aboutFragment"
             app:destination="@+id/aboutFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_weatherFragment"
+            app:destination="@id/weatherFragment" />
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"
@@ -32,6 +35,15 @@
         tools:layout="@layout/fragment_luggage">
         <action
             android:id="@+id/action_luggageFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/weatherFragment"
+        android:name="com.example.simplerecyclerview.fragments.WeatherFragment"
+        android:label="fragment_weather"
+        tools:layout="@layout/fragment_weather">
+        <action
+            android:id="@+id/action_weatherFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
     </fragment>
 </navigation>

@@ -2,18 +2,15 @@ package com.example.simplerecyclerview.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecyclerview.R
 import com.example.simplerecyclerview.fragments.luggage_recycler.LuggageAdapter
 import kotlinx.android.synthetic.main.fragment_luggage.*
-import kotlinx.android.synthetic.main.fragment_luggage.view.*
-import java.util.*
 
 class LuggageFragment : Fragment() {
     companion object {
@@ -37,7 +34,6 @@ class LuggageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //activity!!.actionBar!!.title = "HHDSHFAISD"
         val selectedLuggage = MainFragment.luggagesList[cardViewPressedPos]
         luggagesList.addAll(
             listOf(

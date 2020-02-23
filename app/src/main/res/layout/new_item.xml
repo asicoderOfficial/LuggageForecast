@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.google.android.material.card.MaterialCardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/tripsCV"
         android:layout_width="match_parent"
         android:layout_height="180dp"
@@ -26,6 +26,20 @@
             android:layout_height="match_parent">
 
             <ImageButton
+                android:id="@+id/weatherIBT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/design_default_color_on_primary"
+                app:layout_constraintEnd_toStartOf="@+id/editTripIBT"
+                app:layout_constraintHorizontal_bias="0.996"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/cloudy" />
+
+            <ImageButton
                 android:id="@+id/eraseTripBT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,6 +49,7 @@
                 android:background="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/erase_tripIBcont_desc"
                 app:srcCompat="@drawable/rubbish" />
 
             <ImageButton
@@ -47,51 +62,99 @@
                 android:background="@android:color/white"
                 app:layout_constraintEnd_toStartOf="@+id/eraseTripBT"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/outline_edit_black_18dp" />
+                android:contentDescription="@string/editTripIVcontent_desc"
+                app:srcCompat="@drawable/pencil" />
 
             <TextView
                 android:id="@+id/endTextView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/end_of_trip"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.9"
-                tools:layout_editor_absoluteX="0dp" />
+                app:layout_constraintVertical_bias="0.9" />
+
+
+            <TextView
+                android:id="@+id/endOfTripTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.293"
+                app:layout_constraintStart_toEndOf="@+id/endTextView"
+                app:layout_constraintTop_toBottomOf="@+id/startOfTripTV"
+                app:layout_constraintVertical_bias="0.466" />
 
             <TextView
                 android:id="@+id/startTextView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/start_of_trip"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.695"
-                tools:layout_editor_absoluteX="0dp" />
+                app:layout_constraintVertical_bias="0.695" />
+
+
+            <TextView
+                android:id="@+id/startOfTripTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.3"
+                app:layout_constraintStart_toEndOf="@+id/startTextView"
+                app:layout_constraintTop_toBottomOf="@+id/destinyOfTripTV" />
 
             <TextView
                 android:id="@+id/destinyTextView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/destiny_text"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/nameoftripTV"
+                app:layout_constraintVertical_bias="0.111" />
+
+
+            <TextView
+                android:id="@+id/destinyOfTripTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.334"
+                app:layout_constraintStart_toEndOf="@+id/destinyTextView"
+                app:layout_constraintTop_toBottomOf="@+id/nameTextView"
+                app:layout_constraintVertical_bias="0.08"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/nameoftripTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="90dp"
+                android:maxWidth="@dimen/max_width_newitem_tvs"
+                app:layout_constraintBottom_toBottomOf="@+id/endTextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.305"
+                app:layout_constraintStart_toEndOf="@+id/nameTextView"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.503"
-                tools:layout_editor_absoluteX="0dp" />
+                app:layout_constraintVertical_bias="1.0" />
 
             <TextView
                 android:id="@+id/nameTextView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="52dp"
                 android:text="@string/name_of_trip"
-                app:layout_constraintBottom_toBottomOf="@+id/endTextView"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.303" />
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>
