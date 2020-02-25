@@ -57,7 +57,7 @@ class MainFragment : Fragment() {
         var sCityID: String? = null
         var tripDurationDays: Int? = null
         var cardViewPosition: Int? = null
-        var luggagesList: ArrayList<LuggageDataClass> = ArrayList() 
+        var luggagesList: ArrayList<LuggageDataClass> = ArrayList()
         var luggageDB: LuggageDatabaseClass? = null
         var citiesIdMap = HashMap<String, String>()
         var citiesList = ArrayList<String>()
