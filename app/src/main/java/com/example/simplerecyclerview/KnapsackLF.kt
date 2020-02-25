@@ -26,8 +26,6 @@ class KnapsackLF {
             luggageHM["Hat"] = 0
             luggageHM["Gloves"] = 0
             luggageHM["Scarf"] = 0
-
-
         }
 
         fun solver(weatherForecast: ArrayList<Array<Double>>) {
@@ -94,11 +92,11 @@ class KnapsackLF {
                 luggageHM["Scarf"]
             )
             if (selectedAction == 0) { //adding new luggage
-                MainFragment.luggageDB!!.luggagesDao().insert(newLuggage)
-                MainFragment.luggagesList.add(newLuggage)
+                MainFragment.viewModel!!.luggagesDB.insert(newLuggage)
+                MainFragment.viewModel!!.luggagesList.add(newLuggage)
             } else { //editing existing luggage
-                MainFragment.luggageDB!!.luggagesDao().update(newLuggage)
-                MainFragment.luggagesList[MainFragment.cardViewPosition!!] = newLuggage
+                MainFragment.viewModel!!.luggagesDB.update(newLuggage)
+                MainFragment.viewModel!!.luggagesList[MainFragment.cardViewPosition!!] = newLuggage
             }
         }
     }
