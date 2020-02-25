@@ -1,4 +1,4 @@
-package com.example.simplerecyclerview.fragments
+package com.example.simplerecyclerview.fragments.main_fragment
 
 import android.app.AlarmManager
 import android.app.DatePickerDialog
@@ -12,7 +12,9 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,8 +25,10 @@ import com.example.simplerecyclerview.data_luggages.LuggageDataClass
 import com.example.simplerecyclerview.data_luggages.LuggageDatabaseClass
 import com.example.simplerecyclerview.data_trips.TripsDataClass
 import com.example.simplerecyclerview.data_trips.TripsDatabaseClass
-import com.example.simplerecyclerview.fragments.main_recycler.MainAdapter
-import com.example.simplerecyclerview.fragments.main_recycler.RV_Methods
+import com.example.simplerecyclerview.databinding.ActivityMainBinding
+import com.example.simplerecyclerview.databinding.FragmentMainBinding
+import com.example.simplerecyclerview.fragments.main_fragment.main_recycler.MainAdapter
+import com.example.simplerecyclerview.fragments.main_fragment.main_recycler.RV_Methods
 import com.facebook.stetho.Stetho
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.popup_data.view.*
@@ -37,38 +41,22 @@ import kotlin.collections.ArrayList
 
 class MainFragment : Fragment() {
 
-    private var tripsDB: TripsDatabaseClass? = null
-    var tripsList: ArrayList<TripsDataClass> = ArrayList()
-    private var citiesList = ArrayList<String>()
     private var intentJsonParserService: Intent? = null
     private lateinit var autoCompleteAdapter: ArrayAdapter<String>
-    private lateinit var alarmManager: AlarmManager
-
-    private lateinit var rvAdapter: MainAdapter
+    //private lateinit var alarmManager: AlarmManager
     private val MILLIES_DAY = 86400000
     private var formate =
         SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    private lateinit var binding: FragmentMainBinding
 
     companion object {
         var sCityID: String? = null
         var tripDurationDays: Int? = null
         var cardViewPosition: Int? = null
-        var luggagesList: ArrayList<LuggageDataClass> = ArrayList()
-        var luggageDB: LuggageDatabaseClass? = null
         var citiesIdMap = HashMap<String, String>()
-
-        fun getDestinationTime(dateDestination: String): Long {
-
-            val unixTimeDestination = Calendar.getInstance()
-            unixTimeDestination.set(
-                dateDestination.substring(6, 10).toInt(),
-                dateDestination.substring(3, 5).toInt(),
-                dateDestination.substring(0, 2).toInt(),
-                0, 0, 0
-            )
-            val inMillies = unixTimeDestination.timeInMillis
-            return inMillies
-        }
+        var citiesList = ArrayList<String>()
+        lateinit var rvAdapter: MainAdapter
+        var viewModel: MainViewModel? = null
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -78,8 +66,17 @@ class MainFragment : Fragment() {
     ): View? {
         Timber.plant()
         // Inflate the layout for this fragment
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main, container, false)
+        val application = requireNotNull(this.activity).application
+        val tripsDataSource = TripsDatabaseClass.getAppDataBase(application)!!.newDao()
+        val luggagesDataSource = LuggageDatabaseClass.getAppDataBase(application)!!.luggagesDao()
+        val viewModelFactory =
+            MainViewModelFactory(tripsDataSource, luggagesDataSource, application)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
+
         setHasOptionsMenu(true)
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -100,16 +97,12 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
             Stetho.initializeWithDefaults(context)
             mainRV.layoutManager = LinearLayoutManager(activity!!.applicationContext)
-            if (citiesList.isEmpty())
-                bufferer()
             intentJsonParserService = Intent(context, JsonParserService::class.java)
-        alarmManager = activity!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            tripsDB = TripsDatabaseClass.getAppDataBase(activity!!.applicationContext)
-            luggageDB = LuggageDatabaseClass.getAppDataBase(activity!!.applicationContext)
+        //alarmManager = activity!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
             rvAdapter =
                 MainAdapter(
-                    tripsList,
+                    viewModel!!.tripsList,
                     context,
                     object :
                         RV_Methods {
@@ -127,10 +120,8 @@ class MainFragment : Fragment() {
             tripsDB!!.newDao().deleteAllTrips()t.clear()
             tripsList.clear()*/
 
-            if (tripsList.isEmpty() && tripsDB!!.newDao().getNumberOfTrips() != 0)
-                tripsList.addAll(tripsDB!!.newDao().getAllTrips() as ArrayList<TripsDataClass>)
-            if (luggageDB!!.luggagesDao().getNumberOfLuggages() != 0)
-                luggagesList.addAll(luggageDB!!.luggagesDao().getAllLugages() as ArrayList<LuggageDataClass>)
+        if (citiesList.isEmpty())
+            bufferer()
 
             mainRV.adapter = rvAdapter
             autoCompleteAdapter =
@@ -154,7 +145,7 @@ class MainFragment : Fragment() {
             popUpBuilder.setNegativeButton("NO") { _: DialogInterface, _: Int -> }.create()
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            eraseTrip(position)
+            viewModel!!.eraseTrip(position)
             dialog.dismiss()
         }
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
@@ -189,16 +180,14 @@ class MainFragment : Fragment() {
                 .create()
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            if (!textChecker(
+            if ((textChecker(
                     popUpInflater.nameOfTripEditText.text.toString(),
                     popUpInflater.destinyAutoCTV.text.toString(),
                     popUpInflater.startDateTV.text.toString(),
                     popUpInflater.endDateTV.text.toString(),
                     0
-                )
-            )
-
-            else {
+                ))
+            ) {
                 Thread {
                     val newTrip = TripsDataClass(
                         popUpInflater.nameOfTripEditText.text.toString(),
@@ -207,17 +196,19 @@ class MainFragment : Fragment() {
                         popUpInflater.startDateTV.text.toString(),
                         popUpInflater.endDateTV.text.toString()
                     )
-                    tripsList.add(newTrip)
-
-                    tripsDB?.newDao()?.insert(newTrip)
+                    //tripsList.add(newTrip)
+                    //viewModel.tripsDB.insert(newTrip)
+                    viewModel!!.addTrip(newTrip)
                 }.start()
                 sCityID = citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!
                 tripDurationDays =
-                    ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
+                    ((viewModel!!.getDestinationTime(
+                        popUpInflater.endDateTV.text.toString()
+                    ) - viewModel!!.getDestinationTime(
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toInt()
-                rvAdapter.notifyItemInserted(tripsList.size)
-                cardViewPosition = tripsList.size - 1
+                rvAdapter.notifyItemInserted(viewModel!!.tripsList.size)
+                cardViewPosition = viewModel!!.tripsList.size - 1
                 KnapsackLF.selectedAction = 0
                 activity!!.startService(intentJsonParserService)
                 dialog.dismiss()
@@ -228,10 +219,10 @@ class MainFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.N)
     fun editTripPopUp(position: Int, it: View) {
         val popUpInflater = layoutInflater.inflate(R.layout.popup_data, null, false)
-        popUpInflater.nameOfTripEditText.setText(tripsList[position].name)
-        popUpInflater.destinyAutoCTV.setText(tripsList[position].destinationName)
-        popUpInflater.startDateTV.text = (tripsList[position].start)
-        popUpInflater.endDateTV.text = (tripsList[position].end)
+        popUpInflater.nameOfTripEditText.setText(viewModel!!.tripsList[position].name)
+        popUpInflater.destinyAutoCTV.setText(viewModel!!.tripsList[position].destinationName)
+        popUpInflater.startDateTV.text = (viewModel!!.tripsList[position].start)
+        popUpInflater.endDateTV.text = (viewModel!!.tripsList[position].end)
 
         val popUpBuilder = AlertDialog.Builder(it.context)
         popUpBuilder.setView(popUpInflater)
@@ -266,12 +257,15 @@ class MainFragment : Fragment() {
                         popUpInflater.startDateTV.text.toString(),
                         popUpInflater.endDateTV.text.toString()
                     )
-                    tripsList[position] = newTrip
-                    tripsDB?.newDao()?.update(newTrip)
+                    //tripsList[position] = newTrip
+                    //tripsDB?.newDao()?.update(newTrip)
+                    viewModel!!.updateTrip(newTrip, position)
                 }.start()
                 sCityID = citiesIdMap[popUpInflater.destinyAutoCTV.text.toString()]!!
                 tripDurationDays =
-                    ((getDestinationTime(popUpInflater.endDateTV.text.toString()) - getDestinationTime(
+                    ((viewModel!!.getDestinationTime(
+                        popUpInflater.endDateTV.text.toString()
+                    ) - viewModel!!.getDestinationTime(
                         popUpInflater.startDateTV.text.toString()
                     )) / MILLIES_DAY).toInt() + 1
                 cardViewPosition = position
@@ -283,24 +277,32 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun eraseTrip(position: Int) {
-        tripsDB!!.newDao().delete(tripsList[position])
-        tripsList.remove(tripsList[position])
-        luggageDB!!.luggagesDao().delete(luggagesList[position])
-        luggagesList.removeAt(position)
-        rvAdapter.notifyItemRemoved(position)
-        rvAdapter.notifyItemRangeChanged(position, tripsList.size)
+    private fun bufferer() {
+        val bfr = BufferedReader(InputStreamReader(activity!!.assets.open("city_id.txt")))
+        bfr.forEachLine {
+            val pair = it.split(" ")
+            MainFragment.citiesIdMap[pair[1]] = pair[0]
+        }
+        citiesList = ArrayList(MainFragment.citiesIdMap.keys)
     }
 
-    fun textChecker(
+    private fun textChecker(
         name: String,
         destiny: String,
         starting: String,
         ending: String,
         actionSelected: Int
     ): Boolean {
-        val dateStartingInMillies = Date(getDestinationTime(starting))
-        val dateEndingInMillies = Date(getDestinationTime(ending))
+        val dateStartingInMillies = Date(
+            viewModel!!.getDestinationTime(
+                starting
+            )
+        )
+        val dateEndingInMillies = Date(
+            viewModel!!.getDestinationTime(
+                ending
+            )
+        )
         val diffStartEnd = dateEndingInMillies.time - dateStartingInMillies.time
         if (name == "")
             Toast.makeText(context, "Name of trip can not be empty.", Toast.LENGTH_LONG).show()
@@ -315,8 +317,8 @@ class MainFragment : Fragment() {
                 Toast.LENGTH_LONG
             ).show()
         } else if (actionSelected == 0) {
-            for (i in 0 until tripsList.size) {
-                if (name == tripsList[i].name) {
+            for (i in 0 until viewModel!!.tripsList.size) {
+                if (name == viewModel!!.tripsList[i].name) {
                     Toast.makeText(
                         activity,
                         "You can not have trips with the same name.",
@@ -330,16 +332,6 @@ class MainFragment : Fragment() {
             return true
         }
         return false
-    }
-
-    private fun bufferer() {
-
-        val bfr = BufferedReader(InputStreamReader(activity!!.assets.open("city_id.txt")))
-        bfr.forEachLine {
-            val pair = it.split(" ")
-            citiesIdMap[pair[1]] = pair[0]
-        }
-        citiesList = ArrayList(citiesIdMap.keys)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)

@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="description"
+            type="com.example.simplerecyclerview.fragments.about_fragment.Description" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/aboutFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.AboutFragment">
+        tools:context=".fragments.about_fragment.AboutFragment">
 
     <TextView
         android:id="@+id/descriptionAboutTV"
@@ -18,7 +27,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
         android:linksClickable="true"
-        android:text="@string/main_text_about_fragment"
+        android:text="@={description.desc}"
         android:textColor="@android:color/background_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,3 +37,4 @@
         app:layout_constraintVertical_bias="0.285" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
