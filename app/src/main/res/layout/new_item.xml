@@ -26,20 +26,6 @@
             android:layout_height="match_parent">
 
             <ImageButton
-                android:id="@+id/weatherIBT"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@color/design_default_color_on_primary"
-                app:layout_constraintEnd_toStartOf="@+id/editTripIBT"
-                app:layout_constraintHorizontal_bias="0.996"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/cloudy" />
-
-            <ImageButton
                 android:id="@+id/eraseTripBT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

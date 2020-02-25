@@ -56,6 +56,19 @@ class MainFragment : Fragment() {
         var luggagesList: ArrayList<LuggageDataClass> = ArrayList()
         var luggageDB: LuggageDatabaseClass? = null
         var citiesIdMap = HashMap<String, String>()
+
+        fun getDestinationTime(dateDestination: String): Long {
+
+            val unixTimeDestination = Calendar.getInstance()
+            unixTimeDestination.set(
+                dateDestination.substring(6, 10).toInt(),
+                dateDestination.substring(3, 5).toInt(),
+                dateDestination.substring(0, 2).toInt(),
+                0, 0, 0
+            )
+            val inMillies = unixTimeDestination.timeInMillis
+            return inMillies
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -107,7 +120,8 @@ class MainFragment : Fragment() {
                         override fun onItemEraseClick(position: Int) {
                             showDeleteDialog(position)
                         }
-                    })
+                    }, activity!!
+                )
 
             /*luggageDB!!.luggagesDao().deleteAllLuggages()
             tripsDB!!.newDao().deleteAllTrips()t.clear()
@@ -278,7 +292,7 @@ class MainFragment : Fragment() {
         rvAdapter.notifyItemRangeChanged(position, tripsList.size)
     }
 
-    private fun textChecker(
+    fun textChecker(
         name: String,
         destiny: String,
         starting: String,
@@ -316,19 +330,6 @@ class MainFragment : Fragment() {
             return true
         }
         return false
-    }
-
-    private fun getDestinationTime(dateDestination: String): Long {
-
-        val unixTimeDestination = Calendar.getInstance()
-        unixTimeDestination.set(
-            dateDestination.substring(6, 10).toInt(),
-            dateDestination.substring(3, 5).toInt(),
-            dateDestination.substring(0, 2).toInt(),
-            0, 0, 0
-        )
-        val inMillies = unixTimeDestination.timeInMillis
-        return inMillies
     }
 
     private fun bufferer() {
