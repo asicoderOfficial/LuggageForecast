@@ -1,0 +1,58 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "878516980432b05b406e738a1a39df21",
+    "entities": [
+      {
+        "tableName": "Trips",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`Name` TEXT NOT NULL, `Destination Name` TEXT NOT NULL, `Destination ID` TEXT NOT NULL, `Start` TEXT NOT NULL, `End` TEXT NOT NULL, PRIMARY KEY(`Name`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "Name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "destinationName",
+            "columnName": "Destination Name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "destinationID",
+            "columnName": "Destination ID",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "start",
+            "columnName": "Start",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "end",
+            "columnName": "End",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "Name"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '878516980432b05b406e738a1a39df21')"
+    ]
+  }
+}

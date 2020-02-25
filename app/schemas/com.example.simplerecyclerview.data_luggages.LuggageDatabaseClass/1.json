@@ -1,0 +1,118 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "4d5e8ed3a0924804e0efd9dbebace971",
+    "entities": [
+      {
+        "tableName": "Luggages",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`Index` INTEGER NOT NULL, `T-Shirts` INTEGER, `Jacket` INTEGER, `Coat` INTEGER, `Long-sleeved T-shirts` INTEGER, `Shorts` INTEGER, `Trousers` INTEGER, `Shoes` INTEGER, `Underpants` INTEGER, `Socks` INTEGER, `Umbrella` INTEGER, `Raincoat` INTEGER, `Hat` INTEGER, `Gloves` INTEGER, `Scarf` INTEGER, PRIMARY KEY(`Index`))",
+        "fields": [
+          {
+            "fieldPath": "cardViewPos",
+            "columnName": "Index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "t_shirts",
+            "columnName": "T-Shirts",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "jacket",
+            "columnName": "Jacket",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "coat",
+            "columnName": "Coat",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "long_sleevedT_shirts",
+            "columnName": "Long-sleeved T-shirts",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "shorts",
+            "columnName": "Shorts",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "trousers",
+            "columnName": "Trousers",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "shoes",
+            "columnName": "Shoes",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "underpants",
+            "columnName": "Underpants",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "socks",
+            "columnName": "Socks",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "umbrella",
+            "columnName": "Umbrella",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "raincoat",
+            "columnName": "Raincoat",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hat",
+            "columnName": "Hat",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gloves",
+            "columnName": "Gloves",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "scarf",
+            "columnName": "Scarf",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "Index"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4d5e8ed3a0924804e0efd9dbebace971')"
+    ]
+  }
+}
