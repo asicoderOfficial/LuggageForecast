@@ -1,4 +1,4 @@
-package com.example.simplerecyclerview.fragments.luggage_recycler
+package com.example.simplerecyclerview.fragments.luggage_fragment.luggage_recycler
 
 import android.content.Context
 import android.view.LayoutInflater

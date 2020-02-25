@@ -6,7 +6,7 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.simplerecyclerview.fragments.MainFragment"
+        android:name="com.example.simplerecyclerview.fragments.main_fragment.MainFragment"
         android:label="Luggage Forecast"
         tools:layout="@layout/fragment_main">
         <action
@@ -18,7 +18,7 @@
     </fragment>
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="com.example.simplerecyclerview.fragments.AboutFragment"
+        android:name="com.example.simplerecyclerview.fragments.about_fragment.AboutFragment"
         android:label="Luggage Forecast"
         tools:layout="@layout/fragment_about">
         <action
@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/luggageFragment"
-        android:name="com.example.simplerecyclerview.fragments.LuggageFragment"
+        android:name="com.example.simplerecyclerview.fragments.luggage_fragment.luggage_recycler.LuggageFragment"
         android:label="Luggage Forecast"
         tools:layout="@layout/fragment_luggage">
         <action

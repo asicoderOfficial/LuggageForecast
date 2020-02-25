@@ -2,8 +2,7 @@ package com.example.simplerecyclerview
 
 import android.app.IntentService
 import android.content.Intent
-import com.example.simplerecyclerview.fragments.MainFragment
-import com.example.simplerecyclerview.fragments.main_recycler.MainAdapter
+import com.example.simplerecyclerview.fragments.main_fragment.MainFragment
 import org.json.JSONObject
 import timber.log.Timber
 import java.net.URL

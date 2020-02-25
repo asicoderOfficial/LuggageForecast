@@ -1,31 +1,31 @@
 package com.example.simplerecyclerview
 
 import com.example.simplerecyclerview.data_luggages.LuggageDataClass
-import com.example.simplerecyclerview.fragments.MainFragment
+import com.example.simplerecyclerview.fragments.main_fragment.MainFragment
 import kotlin.math.max
 import kotlin.math.min
 
 class KnapsackLF {
 
     companion object {
-        var luggageHM: HashMap<String, Int> = HashMap<String, Int>()
+        private var luggageHM: HashMap<String, Int> = HashMap()
         var selectedAction: Int? = null
 
         private fun initLuggageHM() {
-            luggageHM.put("T-shirts", 0)
-            luggageHM.put("Jackets", 0)
-            luggageHM.put("Coat", 0)
-            luggageHM.put("Long-Sleeved T-Shirts", 0)
-            luggageHM.put("Shorts", 0)
-            luggageHM.put("Trousers", 0)
-            luggageHM.put("Shoes", 0)
-            luggageHM.put("Underpants", 0)
-            luggageHM.put("Socks", 0)
-            luggageHM.put("Umbrella", 0)
-            luggageHM.put("Raincoat", 0)
-            luggageHM.put("Hat", 0)
-            luggageHM.put("Gloves", 0)
-            luggageHM.put("Scarf", 0)
+            luggageHM["T-shirts"] = 0
+            luggageHM["Jackets"] = 0
+            luggageHM["Coat"] = 0
+            luggageHM["Long-Sleeved T-Shirts"] = 0
+            luggageHM["Shorts"] = 0
+            luggageHM["Trousers"] = 0
+            luggageHM["Shoes"] = 0
+            luggageHM["Underpants"] = 0
+            luggageHM["Socks"] = 0
+            luggageHM["Umbrella"] = 0
+            luggageHM["Raincoat"] = 0
+            luggageHM["Hat"] = 0
+            luggageHM["Gloves"] = 0
+            luggageHM["Scarf"] = 0
 
 
         }

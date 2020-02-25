@@ -1,18 +1,15 @@
-package com.example.simplerecyclerview.fragments.main_recycler
+package com.example.simplerecyclerview.fragments.main_fragment.main_recycler
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
-import com.example.simplerecyclerview.JsonParserService
 import com.example.simplerecyclerview.R
 import com.example.simplerecyclerview.data_trips.TripsDataClass
-import com.example.simplerecyclerview.fragments.LuggageFragment
-import com.example.simplerecyclerview.fragments.MainFragment
+import com.example.simplerecyclerview.fragments.luggage_fragment.luggage_recycler.LuggageFragment
 import kotlinx.android.synthetic.main.new_item.view.*
 
 class MainAdapter(

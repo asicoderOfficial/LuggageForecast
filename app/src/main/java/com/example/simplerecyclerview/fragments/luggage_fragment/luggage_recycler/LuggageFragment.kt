@@ -1,4 +1,4 @@
-package com.example.simplerecyclerview.fragments
+package com.example.simplerecyclerview.fragments.luggage_fragment.luggage_recycler
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.simplerecyclerview.R
-import com.example.simplerecyclerview.fragments.luggage_recycler.LuggageAdapter
+import com.example.simplerecyclerview.fragments.main_fragment.MainFragment
 import kotlinx.android.synthetic.main.fragment_luggage.*
 
 class LuggageFragment : Fragment() {
@@ -28,7 +28,8 @@ class LuggageFragment : Fragment() {
         // Inflate the layout for this fragment
         val inflated = inflater.inflate(R.layout.fragment_luggage, container, false)
         luggagesList.clear()
-        (activity as AppCompatActivity).supportActionBar?.title = titleActionBar
+        (activity as AppCompatActivity).supportActionBar?.title =
+            titleActionBar
         return inflated
     }
 
@@ -54,7 +55,10 @@ class LuggageFragment : Fragment() {
             )
         )
         luggageRV.layoutManager = LinearLayoutManager(activity!!.applicationContext)
-        rvAdapter = LuggageAdapter(luggagesList, context)
-        luggageRV.adapter = rvAdapter
+        rvAdapter = LuggageAdapter(
+            luggagesList, context
+        )
+        luggageRV.adapter =
+            rvAdapter
     }
 }

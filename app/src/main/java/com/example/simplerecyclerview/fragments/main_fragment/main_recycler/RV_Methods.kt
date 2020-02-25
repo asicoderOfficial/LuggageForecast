@@ -1,4 +1,4 @@
-package com.example.simplerecyclerview.fragments.main_recycler
+package com.example.simplerecyclerview.fragments.main_fragment.main_recycler
 
 import android.view.View
 
