@@ -13,7 +13,7 @@ That means, ***trips can not last more than 5 days.***
  ```
  Press the + button on the down-left corner.
  
- ![Screenshot_2020-02-26-13-30-44-594_com example simplerecyclerview](https://user-images.githubusercontent.com/48477929/75360709-7ea11700-58b6-11ea-8453-ce32940c98ea.jpg)
+![Screenshot_2020-02-26-13-30-44-594_com example simplerecyclerview](https://user-images.githubusercontent.com/48477929/75362651-5b2b9b80-58b9-11ea-8946-349f079ed346.jpg)
  
  Introduce the following fields:
  -Name of the trip
@@ -21,33 +21,34 @@ That means, ***trips can not last more than 5 days.***
  -Starting date
  -Ending date
  
- ![Screenshot_2020-02-26-13-30-52-801_com example simplerecyclerview](https://user-images.githubusercontent.com/48477929/75357405-9d50df00-58b1-11ea-821b-b36f2b9c3aaa.jpg
+ ![Screenshot_2020-02-26-13-30-52-801_com example simplerecyclerview](https://user-images.githubusercontent.com/48477929/75362709-6da5d500-58b9-11ea-874c-bfe5d76a01fe.jpg)
  
  ```
  Getting your luggage
  ```
   Press on the cardview and you will be redirected to the screen that contains your luggage, which will be ready as soon as possible!
  
-  ![Screenshot_2020-02-26-13-30-52-801_com example simplerecyclerview](https://user-images.githubusercontent.com/48477929/75360816-a2645d00-58b6-11ea-9a14-6ae9bc472cd3.jpg)
+![Screenshot_2020-02-26-15-32-01-622_com example simplerecyclerview](https://user-images.githubusercontent.com/48477929/75362997-caa18b00-58b9-11ea-8ef8-e75fe96bc795.jpg)
  
  Luggage configuration to the trip of this example:
- ![Screenshot_2020-02-26-13-32-10-277_com example simplerecyclerview](https://user-images.githubusercontent.com/48477929/75358185-c6be3a80-58b2-11ea-8ef8-7eac31ba893a.jpg)
  
-![Screenshot_2020-02-26-13-32-14-876_com example simplerecyclerview](https://user-images.githubusercontent.com/48477929/75358217-d178cf80-58b2-11ea-8db7-ce104bca2b58.jpg)
+![Screenshot_2020-02-26-13-32-10-277_com example simplerecyclerview](https://user-images.githubusercontent.com/48477929/75363026-d8571080-58b9-11ea-8db4-953647af0460.jpg)
+ 
+![Screenshot_2020-02-26-13-32-14-876_com example simplerecyclerview](https://user-images.githubusercontent.com/48477929/75363077-eb69e080-58b9-11ea-9136-3e9d308915fa.jpg)
 
 ```
 Editing your trip
 ```
 Press the pencil icon.
 
-![Screenshot_2020-02-26-16-16-29-424_com example simplerecyclerview - copiaedit](https://user-images.githubusercontent.com/48477929/75358962-f6217700-58b3-11ea-999c-844c130680cc.jpg)
+![Screenshot_2020-02-26-16-16-29-424_com example simplerecyclerview - copia](https://user-images.githubusercontent.com/48477929/75363139-fe7cb080-58b9-11ea-966a-69b67693e9da.jpg)
 
 ```
 Erasing your trip
 ```
 Press the rubbish bin icon.
 
-![Screenshot_2020-02-26-16-16-29-424_com example simplerecyclerview - copiaerase](https://user-images.githubusercontent.com/48477929/75359156-47316b00-58b4-11ea-9b2e-e5339ec8a821.jpg)
+![Screenshot_2020-02-26-16-16-29-424_com example simplerecyclerview - copiaerase](https://user-images.githubusercontent.com/48477929/75363169-076d8200-58ba-11ea-9be9-bb2ba512c7b6.jpg)
 
 
 Thanks for watching my app!
