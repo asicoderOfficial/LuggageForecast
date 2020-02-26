@@ -1,20 +1,19 @@
-package com.example.simplerecyclerview.fragments.main_fragment
+package com.example.simplerecyclerview.fragments.main
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import com.example.simplerecyclerview.data_luggages.LuggageDao
-import com.example.simplerecyclerview.data_luggages.LuggageDataClass
-import com.example.simplerecyclerview.data_trips.TripsDao
-import com.example.simplerecyclerview.data_trips.TripsDataClass
-import com.example.simplerecyclerview.fragments.luggage_fragment.luggage_recycler.LuggageFragment.Companion.rvAdapter
-import com.example.simplerecyclerview.fragments.main_fragment.MainFragment.Companion.citiesList
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.text.FieldPosition
+import com.example.simplerecyclerview.data.luggages.LuggageDao
+import com.example.simplerecyclerview.data.luggages.LuggageDataClass
+import com.example.simplerecyclerview.data.trips.TripsDao
+import com.example.simplerecyclerview.data.trips.TripsDataClass
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * ViewModel class.
+ *
+ * @author Asicoder
+ */
 class MainViewModel(val tripsDB: TripsDao, val luggagesDB: LuggageDao, application: Application) :
     AndroidViewModel(application) {
 
@@ -48,7 +47,6 @@ class MainViewModel(val tripsDB: TripsDao, val luggagesDB: LuggageDao, applicati
     }
 
     fun getDestinationTime(dateDestination: String): Long {
-
         val unixTimeDestination = Calendar.getInstance()
         unixTimeDestination.set(
             dateDestination.substring(6, 10).toInt(),

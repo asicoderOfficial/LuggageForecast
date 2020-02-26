@@ -1,8 +1,7 @@
-package com.example.simplerecyclerview.data_trips
+package com.example.simplerecyclerview.data.trips
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "Trips")

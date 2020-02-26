@@ -1,10 +1,16 @@
-package com.example.simplerecyclerview.fragments.main_fragment
+package com.example.simplerecyclerview.fragments.main
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.simplerecyclerview.data_luggages.LuggageDao
-import com.example.simplerecyclerview.data_trips.TripsDao
+import com.example.simplerecyclerview.data.luggages.LuggageDao
+import com.example.simplerecyclerview.data.trips.TripsDao
+
+/**
+ * ViewModelFactory class to create the ViewModel.
+ *
+ * @author Asicoder
+ */
 
 class MainViewModelFactory(
     private val tripsDB: TripsDao,

@@ -7,14 +7,14 @@
 
         <variable
             name="description"
-            type="com.example.simplerecyclerview.fragments.about_fragment.Description" />
+            type="com.example.simplerecyclerview.fragments.about.Description" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/aboutFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-        tools:context=".fragments.about_fragment.AboutFragment">
+        tools:context=".fragments.about.AboutFragment">
 
     <TextView
         android:id="@+id/descriptionAboutTV"

@@ -1,4 +1,4 @@
-package com.example.simplerecyclerview.data_luggages
+package com.example.simplerecyclerview.data.luggages
 
 import androidx.room.*
 

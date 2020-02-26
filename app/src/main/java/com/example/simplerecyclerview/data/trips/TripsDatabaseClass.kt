@@ -1,24 +1,24 @@
-package com.example.simplerecyclerview.data_luggages
+package com.example.simplerecyclerview.data.trips
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [LuggageDataClass::class], version = 2, exportSchema = true)
-abstract class LuggageDatabaseClass : RoomDatabase() {
-    abstract fun luggagesDao(): LuggageDao
+@Database(entities = [TripsDataClass::class], version = 2, exportSchema = true)
+abstract class TripsDatabaseClass : RoomDatabase() {
+    abstract fun newDao(): TripsDao
 
     companion object {
-        var INSTANCE: LuggageDatabaseClass? = null
+        var INSTANCE: TripsDatabaseClass? = null
 
-        fun getAppDataBase(context: Context): LuggageDatabaseClass? {
+        fun getAppDataBase(context: Context): TripsDatabaseClass? {
             if (INSTANCE == null) {
-                synchronized(LuggageDatabaseClass::class) {
+                synchronized(TripsDatabaseClass::class) {
                     INSTANCE = Room.databaseBuilder(
                         context.applicationContext,
-                        LuggageDatabaseClass::class.java,
-                        "LuggagesDB"
+                        TripsDatabaseClass::class.java,
+                        "TripsDB"
                     )
                         .fallbackToDestructiveMigration()
                         .allowMainThreadQueries()

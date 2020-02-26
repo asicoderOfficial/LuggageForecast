@@ -1,4 +1,4 @@
-package com.example.simplerecyclerview.data_trips
+package com.example.simplerecyclerview.data.trips
 
 import androidx.room.*
 

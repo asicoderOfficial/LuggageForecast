@@ -4,8 +4,7 @@
     tools:context="com.example.simplerecyclerview.MainActivity">
     <item
         android:id="@+id/aboutFragment"
-        android:icon="@drawable/main_logo"
-        android:orderInCategory="100"
+        android:icon="@drawable/ic_more_vert_black_24dp"
         android:title="@string/action_about_text"
         app:showAsAction="never" />
 </menu>

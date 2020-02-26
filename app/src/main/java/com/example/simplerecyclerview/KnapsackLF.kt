@@ -1,10 +1,15 @@
 package com.example.simplerecyclerview
 
-import com.example.simplerecyclerview.data_luggages.LuggageDataClass
-import com.example.simplerecyclerview.fragments.main_fragment.MainFragment
+import com.example.simplerecyclerview.data.luggages.LuggageDataClass
+import com.example.simplerecyclerview.fragments.main.MainFragment
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * Class to calculate the luggage for a trip.
+ *
+ * @author Asicoder
+ */
 class KnapsackLF {
 
     companion object {
@@ -74,29 +79,39 @@ class KnapsackLF {
             luggageHM["Socks"] = tripDurationDays + 1
             luggageHM["Underpants"] = tripDurationDays + 1
 
-            val newLuggage = LuggageDataClass(
-                MainFragment.cardViewPosition!!,
-                luggageHM["T-shirts"],
-                luggageHM["Jacket"],
-                luggageHM["Coat"],
-                luggageHM["Long-Sleeved T-Shirts"],
-                luggageHM["Shorts"],
-                luggageHM["Trousers"],
-                luggageHM["Shoes"],
-                luggageHM["Underpants"],
-                luggageHM["Socks"],
-                luggageHM["Umbrella"],
-                luggageHM["Raincoat"],
-                luggageHM["Hat"],
-                luggageHM["Gloves"],
-                luggageHM["Scarf"]
-            )
+            val newLuggage =
+                MainFragment.cardViewPosition?.let {
+                    LuggageDataClass(
+                        it,
+                        luggageHM["T-shirts"],
+                        luggageHM["Jacket"],
+                        luggageHM["Coat"],
+                        luggageHM["Long-Sleeved T-Shirts"],
+                        luggageHM["Shorts"],
+                        luggageHM["Trousers"],
+                        luggageHM["Shoes"],
+                        luggageHM["Underpants"],
+                        luggageHM["Socks"],
+                        luggageHM["Umbrella"],
+                        luggageHM["Raincoat"],
+                        luggageHM["Hat"],
+                        luggageHM["Gloves"],
+                        luggageHM["Scarf"]
+                    )
+                }
             if (selectedAction == 0) { //adding new luggage
-                MainFragment.viewModel!!.luggagesDB.insert(newLuggage)
-                MainFragment.viewModel!!.luggagesList.add(newLuggage)
+                newLuggage?.let { MainFragment.viewModel?.luggagesDB?.insert(it) }
+                newLuggage?.let { MainFragment.viewModel?.luggagesList?.add(it) }
             } else { //editing existing luggage
-                MainFragment.viewModel!!.luggagesDB.update(newLuggage)
-                MainFragment.viewModel!!.luggagesList[MainFragment.cardViewPosition!!] = newLuggage
+                newLuggage?.let { MainFragment.viewModel?.luggagesDB?.update(it) }
+                MainFragment.cardViewPosition?.let {
+                    newLuggage?.let { it1 ->
+                        MainFragment.viewModel?.luggagesList?.set(
+                            it,
+                            it1
+                        )
+                    }
+                }
             }
         }
     }
