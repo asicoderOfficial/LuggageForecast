@@ -1,10 +1,10 @@
 package com.example.simplerecyclerview.fragments.luggage_fragment.luggage_recycler
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -15,6 +15,8 @@ import com.example.simplerecyclerview.databinding.FragmentAboutBinding
 import com.example.simplerecyclerview.databinding.FragmentLuggageBinding
 import com.example.simplerecyclerview.fragments.main_fragment.MainFragment
 import kotlinx.android.synthetic.main.fragment_luggage.*
+import java.io.File
+import java.lang.StringBuilder
 
 class LuggageFragment : Fragment() {
 
@@ -34,8 +36,10 @@ class LuggageFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_luggage, container, false)
+        luggagesList.clear()
         (activity as AppCompatActivity).supportActionBar?.title =
             titleActionBar
+        setHasOptionsMenu(true)
         return binding.root
     }
 
@@ -71,5 +75,23 @@ class LuggageFragment : Fragment() {
             luggageRV.adapter =
                 rvAdapter
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.share_luggage_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val intentShare = Intent(Intent.ACTION_SEND)
+        intentShare.type = "text/plain"
+        val shareMessage = StringBuilder()
+        shareMessage.append("This is my luggage:\n")
+        luggagesList.forEach {
+            shareMessage.append(it.first).append(" : ").append(it.second).append("\n")
+        }
+        intentShare.putExtra(Intent.EXTRA_TEXT, shareMessage.toString())
+        startActivity(Intent.createChooser(intentShare, "Share your luggage!"))
+        return super.onOptionsItemSelected(item)
     }
 }

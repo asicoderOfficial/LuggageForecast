@@ -28,4 +28,5 @@
     <string name="name_of_trip">Name of trip: </string>
     <string name="editTripIVcontent_desc">Edit trip button</string>
     <string name="erase_tripIBcont_desc">Erase trip</string>
+    <string name="share">Share</string>
 </resources>
