@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.simplerecyclerview.MainActivity">
     <item
-        android:id="@+id/morevert"
+        android:id="@+id/aboutFragment"
         android:icon="@drawable/ic_more_vert_black_24dp"
         android:title="@string/action_about_text"
         app:showAsAction="never" />

@@ -7,6 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 
+/**
+ * @author Asicoder
+ */
 class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -21,5 +24,4 @@ class MainActivity : AppCompatActivity() {
         val navController = this.findNavController(R.id.navHostFragment)
         return navController.navigateUp()
     }
-
 }

@@ -2,12 +2,17 @@ package com.example.simplerecyclerview
 
 import android.app.IntentService
 import android.content.Intent
-import com.example.simplerecyclerview.fragments.main_fragment.MainFragment
+import com.example.simplerecyclerview.fragments.main.MainFragment
 import org.json.JSONObject
 import timber.log.Timber
 import java.net.URL
 
-val API_KEY: String = "dd1670ca8d4a22e19aa20b83753f5dad"
+/**
+ * Class to make an API Call to OpenWeatherMap, get the JSON and parse it.
+ *
+ * @author Asicoder
+ */
+const val API_KEY: String = "dd1670ca8d4a22e19aa20b83753f5dad"
 
 class JsonParserService : IntentService("LuggageCalculationIS") {
 
@@ -48,6 +53,7 @@ class JsonParserService : IntentService("LuggageCalculationIS") {
         } catch (e: Exception) {
             Timber.i("Exception thrown during json parsing.")
         }
+        //Calculate the luggage
         KnapsackLF.solver(params)
     }
 }

@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-        tools:context=".fragments.main_fragment.MainFragment"
+        tools:context=".fragments.main.MainFragment"
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView

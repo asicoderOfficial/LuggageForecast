@@ -1,4 +1,4 @@
-package com.example.simplerecyclerview.fragments.main_fragment.main_recycler
+package com.example.simplerecyclerview.fragments.main.recycler
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,14 +8,20 @@ import androidx.fragment.app.FragmentActivity
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplerecyclerview.R
-import com.example.simplerecyclerview.data_trips.TripsDataClass
-import com.example.simplerecyclerview.fragments.luggage_fragment.luggage_recycler.LuggageFragment
+import com.example.simplerecyclerview.data.trips.TripsDataClass
+import com.example.simplerecyclerview.fragments.luggage.LuggageFragment
 import kotlinx.android.synthetic.main.new_item.view.*
+
+/**
+ * Adapter of the RecyclerView of MainFragment that displays your trips in CardViews.
+ *
+ * @author Asicoder
+ */
 
 class MainAdapter(
     private var tripsList: ArrayList<TripsDataClass>,
     private val context: Context?,
-    private val rvMethods: RV_Methods,
+    private val rvMethods: RVMethods,
     private val activity: FragmentActivity
 ) :
     RecyclerView.Adapter<MainViewHolder>() {

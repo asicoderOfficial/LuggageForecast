@@ -1,4 +1,4 @@
-package com.example.simplerecyclerview.fragments.about_fragment
+package com.example.simplerecyclerview.fragments.about
 
 
 import android.os.Bundle
@@ -11,7 +11,9 @@ import com.example.simplerecyclerview.R
 import com.example.simplerecyclerview.databinding.FragmentAboutBinding
 
 /**
- * A simple [Fragment] subclass.
+ * Fragment about the author of the app.
+ *
+ * @author Asicoder
  */
 class AboutFragment : Fragment() {
 
@@ -23,7 +25,6 @@ class AboutFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_about, null, false)
         binding.description = description
         return binding.root
