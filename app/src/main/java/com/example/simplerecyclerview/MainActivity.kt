@@ -10,6 +10,7 @@ import androidx.navigation.ui.NavigationUI
 /**
  * @author Asicoder
  */
+
 class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.N)
